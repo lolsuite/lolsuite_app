@@ -1,5 +1,4 @@
 #define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
 #include <filesystem>
 #include <ShlObj_core.h>
 #include <tlhelp32.h>
@@ -117,14 +116,21 @@ void ProcessTerminate(const std::wstring& process_name)
 	CloseHandle(snap);
 }
 
+void Unblock(std::wstring file)
+{
+	DeleteFile(file.append(L":Zone.Identifier").c_str());
+}
+
 void URL(const std::wstring& url, int j)
 {
 	URLDownloadToFile(nullptr, std::wstring(L"https://lolsuite.org/files/" + url).c_str(), b[j], 0, nullptr);
+	Unblock(b[j]);
 }
 
 void CustomURL(const std::wstring& url, int j)
 {
 	URLDownloadToFile(nullptr, url.c_str(), b[j], 0, nullptr);
+	Unblock(b[j]);
 }
 
 void bulk_apimswindll(const wchar_t* url)
@@ -835,7 +841,7 @@ void minecraft()
 	AppendFile(82, std::filesystem::current_path());
 	if (x64())
 	{
-		AppendFile(82, L"jdk-22_windows-x64_bin.msi");
+		AppendFile(82, L"jdk-22_windows-x64_bin.exe");
 		CustomURL(L"https://download.oracle.com/java/22/latest/jdk-22_windows-x64_bin.exe", 82);
 	}
 
