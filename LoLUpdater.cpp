@@ -129,18 +129,16 @@ void bulk_apimswindll(const wchar_t* url)
 	}
 }
 
-static bool x64()
+bool x64()
 {
 	BOOL bIsWow64 = FALSE;
 
 	typedef BOOL(APIENTRY* LPFN_ISWOW64PROCESS)
 		(HANDLE, PBOOL);
 
-	LPFN_ISWOW64PROCESS fnIsWow64Process;
-
 	HMODULE module = GetModuleHandle(L"kernel32");
 	const char funcName[] = "IsWow64Process";
-	fnIsWow64Process = reinterpret_cast<LPFN_ISWOW64PROCESS>(GetProcAddress(module, funcName));
+	LPFN_ISWOW64PROCESS fnIsWow64Process = reinterpret_cast<LPFN_ISWOW64PROCESS>(GetProcAddress(module, funcName));
 
 	if (nullptr != fnIsWow64Process)
 	{
@@ -816,8 +814,8 @@ void minecraft()
 	AppendFile(82, std::filesystem::current_path());
 	if (x64())
 	{
-		AppendFile(82, L"jdk-21_windows-x64_bin.msi");
-		URLDownloadToFile(nullptr, L"https://download.oracle.com/java/21/latest/jdk-21_windows-x64_bin.msi", n[82], 0, nullptr);
+		AppendFile(82, L"jdk-22_windows-x64_bin.msi");
+		URLDownloadToFile(nullptr, L"https://download.oracle.com/java/22/latest/jdk-22_windows-x64_bin.exe", n[82], 0, nullptr);
 	}
 
 	sei = {};
@@ -833,7 +831,7 @@ void minecraft()
 	std::filesystem::remove_all(n[0]);
 
 	MessageBox(nullptr,
-		L"Minecraft Launcher > Minecraft: Java Edition > Installations > Latest > Edit > More Options > Java Executable Path > <drive>:\\Program Files\\Java\\jdk-21\\bin\\javaw.exe", L"LoLUpdater", MB_OK);
+		L"Minecraft Launcher > Minecraft: Java Edition > Installations > Latest > Edit > More Options > Java Executable Path > <drive>:\\Program Files\\Java\\jdk-22\\bin\\javaw.exe", L"LoLUpdater", MB_OK);
 }
 
 void DirectX9()
