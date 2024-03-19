@@ -958,9 +958,8 @@ void mesen()
 		AppendFile(2, L"dependency.exe");
 
 		Grab(L"7z.exe", 0);
-
+		Grab(L"windowsdesktop-runtime-6.0.28-win-x64.exe", 2);
 		URLDownloadToFile(nullptr, L"https://nightly.link/SourMesen/Mesen2/workflows/build/master/Mesen%20%28Windows%29.zip", n[1], 0, nullptr);
-		URLDownloadToFile(nullptr, L"https://download.visualstudio.microsoft.com/download/pr/3f02cb28-18d2-41d8-a5e3-411aac7b7e5d/69fb6f7f450993f326ead2575ab783d0/windowsdesktop-runtime-6.0.28-win-x64.exe", n[2], 0, nullptr);
 
 		sei = {};
 		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
