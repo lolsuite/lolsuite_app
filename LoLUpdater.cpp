@@ -65,7 +65,7 @@ std::wstring apimswin[] = {
 const wchar_t* box[18] = {
 	L"League of Legends", L"SMITE", L"DOTA2", L"Minecraft Java",
 	L"Black Desert Online", L"Paladins", L"World of Tanks", L"World of Warships", L"Lineage II",
-	L"Elder Scrolls Online", L"GameLoop", L"TrackMania : Next", L"Mesen (NES/FDS Emulator)", L"FinalBurn Neo", L"HBMAME", L"MAME", L"VCRedist AIO", L"DirectX9 Unblocked"
+	L"Elder Scrolls Online", L"GameLoop", L"TrackMania : Next", L"Mesen2", L"FinalBurn Neo", L"HBMAME", L"MAME", L"VCRedist AIO", L"DirectX9 Unblocked"
 };
 
 void Unblock(std::wstring file)
@@ -156,12 +156,12 @@ static bool x64()
 	return bIsWow64 != FALSE;
 }
 
-void cfg(const std::wstring& key)
+void ini(const std::wstring& key)
 {
 	*n[0] = '\0';
 	*n[82] = '\0';
 	AppendFile(82, std::filesystem::current_path());
-	AppendFile(82, L"lolupdater.cfg");
+	AppendFile(82, L"lolupdater.ini");
 	GetPrivateProfileString(L"Path", key.c_str(), nullptr, n[0], 261, n[82]);
 	if (std::wstring(n[0]).empty())
 	{
@@ -169,23 +169,23 @@ void cfg(const std::wstring& key)
 		i.ulFlags = BIF_USENEWUI | BIF_NONEWFOLDERBUTTON;
 		if (key == L"track")
 		{
-			i.lpszTitle = L"<drive>:\\Epic Games\\TrackmaniaNext";
+			i.lpszTitle = L"Epic Games\\TrackmaniaNext";
 		}
 		if (key == L"ll")
 		{
-			i.lpszTitle = L"<drive>:\\Riot Games\\";
+			i.lpszTitle = L"Riot Games";
 		}
 		if (key == L"d2")
 		{
-			i.lpszTitle = L"steamapps\\common\\dota 2 beta\\game\\bin\\win64";
+			i.lpszTitle = L"Program Files (x86)\\Steam\\steamapps\\common\\dota 2 beta\\game\\bin\\win64";
 		}
 		if (key == L"pl")
 		{
-			i.lpszTitle = L"steamapps\\common\\Paladins\\Binaries";
+			i.lpszTitle = L"Program Files (x86)\\Steam\\steamapps\\common\\Paladins\\Binaries";
 		}
 		if (key == L"sm")
 		{
-			i.lpszTitle = L"steamapps\\common\\SMITE\\Binaries";
+			i.lpszTitle = L"Program Files (x86)\\Steam\\steamapps\\common\\SMITE\\Binaries";
 		}
 		if (key == L"gl")
 		{
@@ -227,7 +227,7 @@ void game(const std::wstring& dir, const std::wstring& key)
 	{
 		*n[i] = '\0';
 	}
-	cfg(key);
+	ini(key);
 	AppendFile(0, dir);
 	CombinePath(41, 0, L"D3DCompiler_42.dll");
 	CombinePath(42, 0, L"d3dx9_42.dll");
@@ -251,7 +251,7 @@ void dota(bool restore)
 	ProcessTerminate(L"dota2.exe");
 	*n[1] = '\0';
 	*n[2] = '\0';
-	cfg(L"d2");
+	ini(L"d2");
 	CombinePath(1, 0, L"D3DCompiler_47.dll");
 	CombinePath(2, 0, L"embree3.dll");
 	Unblock(JoinPath(0, L"dota2.exe"));
@@ -286,7 +286,7 @@ void lineage2(bool restore)
 		*n[i] = '\0';
 	}
 	ProcessTerminate(L"L2.exe");
-	cfg(L"l2");
+	ini(L"l2");
 	AppendFile(8, n[0]);
 	AppendFile(8, L"gameManager\\gameManager.exe");
 	AppendFile(0, L"system");
@@ -337,7 +337,7 @@ void blackdesert(bool restore)
 {
 	ProcessTerminate(L"BlackDesert32.exe");
 	ProcessTerminate(L"BlackDesert64.exe");
-	cfg(L"bdo");
+	ini(L"bdo");
 	if (x64())
 	{
 		game(L"bin64", L"bdo");
@@ -432,7 +432,7 @@ void elderscrolls_online(bool restore)
 		*n[i] = '\0';
 	}
 	ProcessTerminate(L"eso64.exe");
-	cfg(L"eso");
+	ini(L"eso");
 	CombinePath(1, 0, L"d3dcompiler_47.dll");
 	CombinePath(2, 0, L"eso64.exe");
 	Unblock(n[2]);
@@ -465,7 +465,7 @@ void worldoftanks(bool restore)
 	{
 		*n[i] = '\0';
 	}
-	cfg(L"wt");
+	ini(L"wt");
 	wchar_t world_of_tanks[261] = L"WorldOfTanks.exe";
 	ProcessTerminate(L"WorldOfTanks.exe");
 	Unblock(JoinPath(0, world_of_tanks));
@@ -495,7 +495,7 @@ void worldoftanks(bool restore)
 		AppendFile(0, L"system");
 		bulk_apimswindll(L"6/");
 	}
-	cfg(L"wt");
+	ini(L"wt");
 	sei = {};
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 	sei.fMask = 64;
@@ -515,7 +515,7 @@ void worldofwarships(bool restore)
 	{
 		*n[i] = '\0';
 	}
-	cfg(L"ww");
+	ini(L"ww");
 	wchar_t world_of_warships[261] = L"WorldOfWarships.exe";
 	ProcessTerminate(L"WorldOfWarships.exe");
 	Unblock(JoinPath(0, world_of_warships));
@@ -545,7 +545,7 @@ void worldofwarships(bool restore)
 		Grab(L"D3DCompiler_47.dll", 45);
 		Grab(L"D3DCompiler_47.dll", 46);
 	}
-	cfg(L"ww");
+	ini(L"ww");
 	sei = {};
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 	sei.fMask = 64;
@@ -567,7 +567,7 @@ void gameloop(bool restore)
 	{
 		*n[i] = '\0';
 	}
-	cfg(L"gl");
+	ini(L"gl");
 	Unblock(JoinPath(0, L"AppMarket.exe"));
 	Unblock(JoinPath(0, L"QQExternal.exe"));
 	CombinePath(40, 0, L"msvcp140.dll");
@@ -605,9 +605,7 @@ void gameloop(bool restore)
 
 void lol(bool restore)
 {
-	cfg(L"ll");
-    // After 777 FPS
-	// Before 60
+	ini(L"ll");
 	ProcessTerminate(L"LeagueClient.exe");
 	ProcessTerminate(L"LeagueClientUx.exe");
 	ProcessTerminate(L"LeagueClientUxRender.exe");
@@ -631,7 +629,7 @@ void lol(bool restore)
 	}
 	else
 	{
-		if (x64)
+		if (x64())
 		{
 			Grab(L"6/D3DCompiler_47.dll", 55);
 		}
@@ -687,7 +685,7 @@ void lol(bool restore)
 		Grab(L"r/lol/ucrtbase.dll", 48);
 		Grab(L"r/lol/vcruntime140.dll", 49);
 		Grab(L"r/lol/vcruntime140_1.dll", 50);
-		if (x64)
+		if (x64())
 		{
 			Grab(L"6/D3DCompiler_47.dll", 43);
 			Grab(L"6/D3DCompiler_47.dll", 52);
@@ -718,7 +716,7 @@ void smite(bool restore)
 	ProcessTerminate(L"Smite.exe");
 	ProcessTerminate(L"SmiteEAC.exe");
 	ProcessTerminate(L"ShippingPC-BattleGame.exe");
-	cfg(L"sm");
+	ini(L"sm");
 	CombinePath(6, 0, L"win32");
 	AppendFile(0, L"Win64");
 	CombinePath(1, 0, L"tbbmalloc.dll");
@@ -795,7 +793,7 @@ void paladins(bool restore)
 
 	*n[0] = '\0';
 	*n[1] = '\0';
-	cfg(L"pl");
+	ini(L"pl");
 	AppendFile(0, L"Win64");
 	CombinePath(1, 0, L"tbbmalloc.dll");
 	Unblock(JoinPath(0, L"Paladins.exe"));
@@ -811,7 +809,7 @@ void paladins(bool restore)
 	}
 	*n[0] = '\0';
 	*n[1] = '\0';
-	cfg(L"pl");
+	ini(L"pl");
 	AppendFile(0, L"Win32");
 	CombinePath(1, 0, L"tbbmalloc.dll");
 	Unblock(JoinPath(0, L"Paladins.exe"));
@@ -917,12 +915,11 @@ void winaio(bool restore)
 void fbneo()
 {
 	*n[0] = '\0';
-	*n[1] = '\0';
 	*n[2] = '\0';
 	AppendFile(0, std::filesystem::current_path());
 	AppendFile(0, L"unzip.exe");
 	Grab(L"unzip.exe", 0);
-
+	Unblock(n[0]);
 	if (x64())
 	{
 		AppendFile(2, std::filesystem::current_path());
@@ -962,8 +959,7 @@ void mame()
 	AppendFile(82, L"MAME x64 (0.263).exe");
 	if (x64())
 	{
-		URLDownloadToFile(nullptr, L"https://github.com/mamedev/mame/releases/download/mame0263/mame0263b_64bit.exe",
-			n[82], 0, nullptr);
+		URLDownloadToFile(nullptr, L"https://github.com/mamedev/mame/releases/download/mame0263/mame0263b_64bit.exe", n[82], 0, nullptr);
 		Unblock(n[82]);
 	}
 	sei = {};
@@ -982,23 +978,21 @@ void mame()
 
 void mesen()
 {
+
+	*n[0] = '\0';
+	*n[1] = '\0';
+	*n[2] = '\0';
 	if (x64())
 	{
 		AppendFile(0, std::filesystem::current_path());
 		AppendFile(0, L"7z.exe");
 		Grab(L"7z.exe", 0);
-
-		*n[82] = '\0';
-		AppendFile(82, std::filesystem::current_path());
-		AppendFile(82, L"Mesen.zip");
+		Unblock(n[0]);
+		AppendFile(1, std::filesystem::current_path());
+		AppendFile(1, L"Mesen.zip");
 		URLDownloadToFile(nullptr, L"https://nightly.link/SourMesen/Mesen2/workflows/build/master/Mesen%20%28Windows%29.zip", n[82], 0, nullptr);
-		Unblock(n[82]);
+		Unblock(n[1]);
 
-
-		*n[0] = '\0';
-		AppendFile(0, std::filesystem::current_path());
-		AppendFile(0, L"7z.exe");
-		Grab(L"7z.exe", 0);
 		sei = {};
 		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 		sei.fMask = 64;
@@ -1010,16 +1004,15 @@ void mesen()
 		{
 			WaitForSingleObject(sei.hProcess, INFINITE);
 		}
-		*n[82] = '\0';
-		AppendFile(82, std::filesystem::current_path());
-		AppendFile(82, L"windowsdesktop-runtime.exe");
+		AppendFile(2, std::filesystem::current_path());
+		AppendFile(2, L"windowsdesktop-runtime.exe");
 		URLDownloadToFile(nullptr, L"https://download.visualstudio.microsoft.com/download/pr/3f02cb28-18d2-41d8-a5e3-411aac7b7e5d/69fb6f7f450993f326ead2575ab783d0/windowsdesktop-runtime-6.0.28-win-x64.exe", n[82], 0, nullptr);
-		Unblock(n[82]);
+		Unblock(n[2]);
 		sei = {};
 		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 		sei.fMask = 64;
 		sei.nShow = 5;
-		sei.lpFile = n[82];
+		sei.lpFile = n[2];
 		sei.lpParameters = L"/s";
 		ShellExecuteEx(&sei);
 		if (sei.hProcess != nullptr)
@@ -1040,21 +1033,19 @@ void mesen()
 
 void hbmame()
 {
+	*n[0] = '\0';
+	*n[1] = '\0';
 	AppendFile(0, std::filesystem::current_path());
 	AppendFile(0, L"7z.exe");
 	Grab(L"7z.exe", 0);
+	Unblock(n[0]);
 	if (x64())
 	{
-		*n[82] = '\0';
-		AppendFile(82, std::filesystem::current_path());
-		AppendFile(82, L"HBMAME.7z");
-		URLDownloadToFile(nullptr, L"https://hbmame.1emulation.com/hbmameui17.7z", n[82], 0, nullptr);
-		Unblock(n[82]);
+		AppendFile(1, std::filesystem::current_path());
+		AppendFile(1, L"HBMAME.7z");
+		URLDownloadToFile(nullptr, L"https://hbmame.1emulation.com/hbmameui17.7z", n[1], 0, nullptr);
+		Unblock(n[1]);
 	}
-	*n[0] = '\0';
-	AppendFile(0, std::filesystem::current_path());
-	AppendFile(0, L"7z.exe");
-	Grab(L"7z.exe", 0);
 	sei = {};
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 	sei.fMask = 64;
@@ -1066,14 +1057,14 @@ void hbmame()
 	{
 		WaitForSingleObject(sei.hProcess, INFINITE);
 	}
-	std::filesystem::remove_all(n[82]);
+	std::filesystem::remove_all(n[1]);
 	std::filesystem::remove_all(n[0]);
 	exit(0);
 }
 
 void trackmania(bool restore)
 {
-	cfg(L"track");
+	ini(L"track");
 	ProcessTerminate(L"Trackmania.exe");
 	Unblock(JoinPath(0, L"Trackmania.exe"));
 	CombinePath(1, 0, L"d3dcompiler_47.dll");
@@ -1099,7 +1090,7 @@ void trackmania(bool restore)
 	exit(0);
 }
 
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
+int APIENTRY WinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_ LPWSTR lpCmdLine,
 	_In_ int nCmdShow)
@@ -1116,13 +1107,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		return FALSE;
 	}
 
-	HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_LOLUPDATER));
+	HACCEL AccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_LOLUPDATER));
 
 	MSG msg;
 
 	while (GetMessage(&msg, nullptr, 0, 0))
 	{
-		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+		if (!TranslateAccelerator(msg.hwnd, AccelTable, &msg))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
@@ -1134,7 +1125,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
-	WNDCLASSEXW wcex;
+	WNDCLASSEXW wcex{};
 
 	wcex.cbSize = sizeof(WNDCLASSEX);
 
@@ -1165,17 +1156,17 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	CreateWindow(L"BUTTON", L"Restore", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, 290, 10, 75,
 		75, hWnd, reinterpret_cast<HMENU>(2), hInstance, nullptr);
 
-	HWND hWndComboBox = CreateWindow(WC_COMBOBOX, L"",
+	HWND ComboBox = CreateWindow(WC_COMBOBOX, L"",
 		CBS_DROPDOWN | CBS_HASSTRINGS | WS_CHILD | WS_OVERLAPPED | WS_VISIBLE,
 		90, 10, 190, 365, hWnd, NULL, hInstance,
 		NULL);
 
 	for (auto& i : box)
 	{
-		SendMessage(hWndComboBox, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(i));
+		SendMessage(ComboBox, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(i));
 	}
 
-	SendMessage(hWndComboBox, CB_SETCURSEL, 0, 0);
+	SendMessage(ComboBox, CB_SETCURSEL, 0, 0);
 
 	if (!hWnd)
 	{
@@ -1212,7 +1203,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				dota(false);
 				break;
 			case 3:
-				MessageBox(nullptr, L"Uninstall Java through Control Panel", L"LoLUpdater", MB_OK);
+				minecraft();
 				break;
 			case 4:
 				blackdesert(false);
