@@ -7,7 +7,6 @@
 #include <shellapi.h>
 #include <urlmon.h>
 #include "resource.h"
-#pragma comment(lib, "urlmon.lib")
 
 constexpr auto MAX_LOADSTRING = 100;
 wchar_t n[83][MAX_PATH + 1];
