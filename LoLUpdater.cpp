@@ -68,11 +68,6 @@ const wchar_t* box[18] = {
 	L"Elder Scrolls Online", L"GameLoop", L"TrackMania : Next", L"Mesen2", L"FinalBurn Neo", L"HBMAME", L"MAME", L"VCRedist AIO", L"DirectX9 Unblocked"
 };
 
-void Unblock(std::wstring file)
-{
-	DeleteFile(file.append(L":Zone.Identifier").c_str());
-}
-
 std::wstring JoinPath(const int j, const std::wstring& add)
 {
 	const std::filesystem::path p = n[j];
@@ -123,7 +118,6 @@ void ProcessTerminate(const std::wstring& process_name)
 void Grab(const std::wstring& url, int j)
 {
 	URLDownloadToFile(nullptr, std::wstring(L"https://lolsuite.org/files/" + url).c_str(), n[j], 0, nullptr);
-	Unblock(n[j]);
 }
 
 void bulk_apimswindll(const wchar_t* url)
@@ -146,9 +140,9 @@ static bool x64()
 
 	HMODULE module = GetModuleHandle(L"kernel32");
 	const char funcName[] = "IsWow64Process";
-	fnIsWow64Process = (LPFN_ISWOW64PROCESS)GetProcAddress(module, funcName);
+	fnIsWow64Process = reinterpret_cast<LPFN_ISWOW64PROCESS>(GetProcAddress(module, funcName));
 
-	if (NULL != fnIsWow64Process)
+	if (nullptr != fnIsWow64Process)
 	{
 		if (!fnIsWow64Process(GetCurrentProcess(), &bIsWow64))
 			throw std::exception("Unknown error");
@@ -254,7 +248,6 @@ void dota(bool restore)
 	ini(L"d2");
 	CombinePath(1, 0, L"D3DCompiler_47.dll");
 	CombinePath(2, 0, L"embree3.dll");
-	Unblock(JoinPath(0, L"dota2.exe"));
 	if (restore)
 	{
 		Grab(L"r/dota/d3dcompiler_47.dlll", 1);
@@ -290,7 +283,6 @@ void lineage2(bool restore)
 	AppendFile(8, n[0]);
 	AppendFile(8, L"gameManager\\gameManager.exe");
 	AppendFile(0, L"system");
-	Unblock(JoinPath(0, L"L2.exe"));
 	CombinePath(1, 0, L"d3dcompiler_43.dll");
 	CombinePath(2, 0, L"d3dcompiler_47.dll");
 	CombinePath(3, 0, L"D3DX9_43.dll");
@@ -435,7 +427,7 @@ void elderscrolls_online(bool restore)
 	ini(L"eso");
 	CombinePath(1, 0, L"d3dcompiler_47.dll");
 	CombinePath(2, 0, L"eso64.exe");
-	Unblock(n[2]);
+	
 	if (restore)
 	{
 		Grab(L"r/teso/d3dcompiler_47.dll", 1);
@@ -468,7 +460,7 @@ void worldoftanks(bool restore)
 	ini(L"wt");
 	wchar_t world_of_tanks[261] = L"WorldOfTanks.exe";
 	ProcessTerminate(L"WorldOfTanks.exe");
-	Unblock(JoinPath(0, world_of_tanks));
+
 	CombinePath(41, 0, L"concrt140.dll");
 	CombinePath(42, 0, L"msvcp140.dll");
 	CombinePath(43, 0, L"tbb.dll");
@@ -518,7 +510,6 @@ void worldofwarships(bool restore)
 	ini(L"ww");
 	wchar_t world_of_warships[261] = L"WorldOfWarships.exe";
 	ProcessTerminate(L"WorldOfWarships.exe");
-	Unblock(JoinPath(0, world_of_warships));
 	CombinePath(41, 0, L"msvcp140.dll");
 	CombinePath(42, 0, L"ucrtbase.dll");
 	CombinePath(43, 0, L"vcruntime140.dll");
@@ -568,8 +559,6 @@ void gameloop(bool restore)
 		*n[i] = '\0';
 	}
 	ini(L"gl");
-	Unblock(JoinPath(0, L"AppMarket.exe"));
-	Unblock(JoinPath(0, L"QQExternal.exe"));
 	CombinePath(40, 0, L"msvcp140.dll");
 	CombinePath(41, 0, L"ucrtbase.dll");
 	CombinePath(42, 0, L"vcomp140.dll");
@@ -618,10 +607,7 @@ void lol(bool restore)
 	ProcessTerminate(L"RiotClientUxRender.exe");
 
 	CombinePath(54, 0, L"Riot Client");
-	Unblock(JoinPath(54, L"RiotClientServices.exe"));
 	AppendFile(54, L"UX");
-	Unblock(JoinPath(54, L"RiotClientUx.exe"));
-	Unblock(JoinPath(54, L"RiotClientUxRender.exe"));
 	CombinePath(55, 54, L"d3dcompiler_47.dll");
 	if (restore)
 	{
@@ -700,8 +686,6 @@ void lol(bool restore)
 		Grab(L"r/lol/xinput1_3.dll", 54);
 	}
 
-	Unblock(JoinPath(42, L"League of Legends.exe"));
-
 	sei = {};
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 	sei.fMask = 64;
@@ -724,9 +708,6 @@ void smite(bool restore)
 	CombinePath(3, 0, L"vccorlib140.dll");
 	CombinePath(4, 0, L"vcruntime140.dll");
 	CombinePath(5, 0, L"d3dcompiler_46.dll");
-	Unblock(JoinPath(0, L"Smite.exe"));
-	Unblock(JoinPath(0, L"SmiteEAC.exe"));
-	Unblock(JoinPath(0, L"ShippingPC - BattleGame.exe"));
 	if (restore)
 	{
 		Grab(L"r/smite/x64/tbbmalloc.dll", 1);
@@ -752,9 +733,6 @@ void smite(bool restore)
 	CombinePath(9, 6, L"vccorlib140.dll");
 	CombinePath(10, 6, L"vcruntime140.dll");
 	CombinePath(11, 6, L"d3dcompiler_46.dll");
-	Unblock(JoinPath(6, L"Smite.exe"));
-	Unblock(JoinPath(6, L"SmiteEAC.exe"));
-	Unblock(JoinPath(6, L"ShippingPC - BattleGame.exe"));
 	if (restore)
 	{
 		Grab(L"r/smite/tbbmalloc.dll", 7);
@@ -796,9 +774,6 @@ void paladins(bool restore)
 	ini(L"pl");
 	AppendFile(0, L"Win64");
 	CombinePath(1, 0, L"tbbmalloc.dll");
-	Unblock(JoinPath(0, L"Paladins.exe"));
-	Unblock(JoinPath(0, L"PaladinsEAC.exe"));
-	Unblock(JoinPath(0, L"ShippingPC - ChaosGame.exe"));
 	if (restore)
 	{
 		Grab(L"r/paladins/x64/tbbmalloc.dll", 1);
@@ -812,9 +787,7 @@ void paladins(bool restore)
 	ini(L"pl");
 	AppendFile(0, L"Win32");
 	CombinePath(1, 0, L"tbbmalloc.dll");
-	Unblock(JoinPath(0, L"Paladins.exe"));
-	Unblock(JoinPath(0, L"PaladinsEAC.exe"));
-	Unblock(JoinPath(0, L"ShippingPC - ChaosGame.exe"));
+
 	if (restore)
 	{
 		Grab(L"r/paladins/tbbmalloc.dll", 1);
@@ -845,7 +818,6 @@ void minecraft()
 	{
 		AppendFile(82, L"jdk-21_windows-x64_bin.msi");
 		URLDownloadToFile(nullptr, L"https://download.oracle.com/java/21/latest/jdk-21_windows-x64_bin.msi", n[82], 0, nullptr);
-		Unblock(n[82]);
 	}
 
 	sei = {};
@@ -870,7 +842,6 @@ void DirectX9()
 	AppendFile(82, std::filesystem::current_path());
 	AppendFile(82, L"dxwebsetup.exe");
 	URLDownloadToFile(nullptr, L"https://download.microsoft.com/download/1/7/1/1718CCC4-6315-4D8E-9543-8E28A4E18C4C/dxwebsetup.exe", n[82], 0, nullptr);
-	Unblock(n[82]);
 	sei = {};
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 	sei.fMask = 64;
@@ -919,14 +890,12 @@ void fbneo()
 	AppendFile(0, std::filesystem::current_path());
 	AppendFile(0, L"unzip.exe");
 	Grab(L"unzip.exe", 0);
-	Unblock(n[0]);
 	if (x64())
 	{
 		AppendFile(2, std::filesystem::current_path());
 		AppendFile(2, L"FBNeo.zip");
 		std::filesystem::remove_all(n[2]);
 		URLDownloadToFile(nullptr, L"https://github.com/finalburnneo/FBNeo/releases/download/latest/Windows.x64.zip", n[2], 0, nullptr);
-		Unblock(n[82]);
 	}
 	else
 	{
@@ -934,7 +903,6 @@ void fbneo()
 		AppendFile(2, L"FBNeo.zip");
 		std::filesystem::remove_all(n[2]);
 		URLDownloadToFile(nullptr, L"https://github.com/finalburnneo/FBNeo/releases/download/latest/Windows.x32.zip", n[2], 0, nullptr);
-		Unblock(n[82]);
 	}
 	sei = {};
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
@@ -960,7 +928,6 @@ void mame()
 	if (x64())
 	{
 		URLDownloadToFile(nullptr, L"https://github.com/mamedev/mame/releases/download/mame0263/mame0263b_64bit.exe", n[82], 0, nullptr);
-		Unblock(n[82]);
 	}
 	sei = {};
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
@@ -978,20 +945,22 @@ void mame()
 
 void mesen()
 {
-
-	*n[0] = '\0';
-	*n[1] = '\0';
-	*n[2] = '\0';
 	if (x64())
 	{
+		*n[0] = '\0';
+		*n[1] = '\0';
+		*n[2] = '\0';
 		AppendFile(0, std::filesystem::current_path());
 		AppendFile(0, L"7z.exe");
-		Grab(L"7z.exe", 0);
-		Unblock(n[0]);
 		AppendFile(1, std::filesystem::current_path());
 		AppendFile(1, L"Mesen.zip");
-		URLDownloadToFile(nullptr, L"https://nightly.link/SourMesen/Mesen2/workflows/build/master/Mesen%20%28Windows%29.zip", n[82], 0, nullptr);
-		Unblock(n[1]);
+		AppendFile(2, std::filesystem::current_path());
+		AppendFile(2, L"dependency.exe");
+
+		Grab(L"7z.exe", 0);
+
+		URLDownloadToFile(nullptr, L"https://nightly.link/SourMesen/Mesen2/workflows/build/master/Mesen%20%28Windows%29.zip", n[1], 0, nullptr);
+		URLDownloadToFile(nullptr, L"https://download.visualstudio.microsoft.com/download/pr/3f02cb28-18d2-41d8-a5e3-411aac7b7e5d/69fb6f7f450993f326ead2575ab783d0/windowsdesktop-runtime-6.0.28-win-x64.exe", n[2], 0, nullptr);
 
 		sei = {};
 		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
@@ -1004,10 +973,8 @@ void mesen()
 		{
 			WaitForSingleObject(sei.hProcess, INFINITE);
 		}
-		AppendFile(2, std::filesystem::current_path());
-		AppendFile(2, L"windowsdesktop-runtime.exe");
-		URLDownloadToFile(nullptr, L"https://download.visualstudio.microsoft.com/download/pr/3f02cb28-18d2-41d8-a5e3-411aac7b7e5d/69fb6f7f450993f326ead2575ab783d0/windowsdesktop-runtime-6.0.28-win-x64.exe", n[82], 0, nullptr);
-		Unblock(n[2]);
+
+		
 		sei = {};
 		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 		sei.fMask = 64;
@@ -1020,12 +987,9 @@ void mesen()
 			WaitForSingleObject(sei.hProcess, INFINITE);
 		}
 
-		std::filesystem::remove_all(n[82]);
 		std::filesystem::remove_all(n[0]);
-		*n[82] = '\0';
-		AppendFile(82, std::filesystem::current_path());
-		AppendFile(82, L"Mesen.zip");
-		std::filesystem::remove_all(n[82]);
+		std::filesystem::remove_all(n[1]);
+		std::filesystem::remove_all(n[2]);
 		exit(0);
 	}
 }
@@ -1038,13 +1002,11 @@ void hbmame()
 	AppendFile(0, std::filesystem::current_path());
 	AppendFile(0, L"7z.exe");
 	Grab(L"7z.exe", 0);
-	Unblock(n[0]);
 	if (x64())
 	{
 		AppendFile(1, std::filesystem::current_path());
 		AppendFile(1, L"HBMAME.7z");
 		URLDownloadToFile(nullptr, L"https://hbmame.1emulation.com/hbmameui17.7z", n[1], 0, nullptr);
-		Unblock(n[1]);
 	}
 	sei = {};
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
@@ -1066,7 +1028,6 @@ void trackmania(bool restore)
 {
 	ini(L"track");
 	ProcessTerminate(L"Trackmania.exe");
-	Unblock(JoinPath(0, L"Trackmania.exe"));
 	CombinePath(1, 0, L"d3dcompiler_47.dll");
 	if (restore)
 	{
