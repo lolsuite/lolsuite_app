@@ -1,15 +1,17 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
-#include "targetver.h"
 #include <filesystem>
 #include <ShlObj_core.h>
 #include <tlhelp32.h>
 #include <shellapi.h>
 #include <urlmon.h>
 #include "resource.h"
+#include <SDKDDKVer.h>
+#define WINVER 0x0A00
+#define _WIN32_WINNT 0x0A00
 #pragma comment (lib, "urlmon.lib")
 constexpr auto MAX_LOADSTRING = 100;
-wchar_t n[83][MAX_PATH + 1];
+wchar_t b[83][MAX_PATH + 1];
 SHELLEXECUTEINFOW sei;
 int cb;
 HINSTANCE hInst;
@@ -65,32 +67,32 @@ std::wstring apimswin[] = {
 const wchar_t* box[18] = {
 	L"League of Legends", L"SMITE", L"DOTA2", L"Minecraft Java",
 	L"Black Desert Online", L"Paladins", L"World of Tanks", L"World of Warships", L"Lineage II",
-	L"Elder Scrolls Online", L"GameLoop", L"TrackMania : Next", L"Mesen2", L"FinalBurn Neo", L"HBMAME", L"MAME", L"VCRedist AIO", L"DirectX9 Unblocked"
+	L"Elder Scrolls Online", L"GameLoop", L"TrackMania : Next", L"Mesen2", L"FinalBurn Neo", L"HBMAME", L"MAME", L"VCRedist AIO", L"DirectX"
 };
 
 std::wstring JoinPath(const int j, const std::wstring& add)
 {
-	const std::filesystem::path p = n[j];
+	const std::filesystem::path p = b[j];
 	return (p / add).c_str();
 }
 
 void AppendFile(const int j, const std::wstring& add)
 {
-	std::filesystem::path p = n[j];
+	std::filesystem::path p = b[j];
 	const std::filesystem::path f = p / add;
-	wcsncpy_s(n[j], f.c_str(), _TRUNCATE);
+	wcsncpy_s(b[j], f.c_str(), _TRUNCATE);
 }
 
 void CombinePath(const int j, const int k, const std::wstring& add)
 {
-	std::filesystem::path p = n[k];
+	std::filesystem::path p = b[k];
 	const std::filesystem::path f = p / add;
-	wcsncpy_s(n[j], f.c_str(), _TRUNCATE);
+	wcsncpy_s(b[j], f.c_str(), _TRUNCATE);
 }
 
 void CopyFile(const int i, const int k, const std::wstring& add)
 {
-	copy_file(n[i], JoinPath(k, add), std::filesystem::copy_options::overwrite_existing);
+	copy_file(b[i], JoinPath(k, add), std::filesystem::copy_options::overwrite_existing);
 }
 
 void ProcessTerminate(const std::wstring& process_name)
@@ -115,9 +117,14 @@ void ProcessTerminate(const std::wstring& process_name)
 	CloseHandle(snap);
 }
 
-void Grab(const std::wstring& url, int j)
+void URL(const std::wstring& url, int j)
 {
-	URLDownloadToFile(nullptr, std::wstring(L"https://lolsuite.org/files/" + url).c_str(), n[j], 0, nullptr);
+	URLDownloadToFile(nullptr, std::wstring(L"https://lolsuite.org/files/" + url).c_str(), b[j], 0, nullptr);
+}
+
+void CustomURL(const std::wstring& url, int j)
+{
+	URLDownloadToFile(nullptr, url.c_str(), b[j], 0, nullptr);
 }
 
 void bulk_apimswindll(const wchar_t* url)
@@ -125,7 +132,7 @@ void bulk_apimswindll(const wchar_t* url)
 	for (int i = 0; i < 40; i++)
 	{
 		CombinePath(i + 1, 0, apimswin[i]);
-		Grab(&std::wstring(url + std::wstring(apimswin[i]))[0], i + 1);
+		URL(&std::wstring(url + std::wstring(apimswin[i]))[0], i + 1);
 	}
 }
 
@@ -150,14 +157,14 @@ bool x64()
 
 void ini(const std::wstring& key)
 {
-	*n[0] = '\0';
-	*n[82] = '\0';
+	*b[0] = '\0';
+	*b[82] = '\0';
 	AppendFile(82, std::filesystem::current_path());
 	AppendFile(82, L"lolupdater.ini");
-	GetPrivateProfileString(L"Path", key.c_str(), nullptr, n[0], 261, n[82]);
-	if (std::wstring(n[0]).empty())
+	GetPrivateProfileString(L"Path", key.c_str(), nullptr, b[0], 261, b[82]);
+	if (std::wstring(b[0]).empty())
 	{
-		BROWSEINFOW i{};
+		BROWSEINFO i{};
 		i.ulFlags = BIF_USENEWUI | BIF_NONEWFOLDERBUTTON;
 		if (key == L"track")
 		{
@@ -203,58 +210,33 @@ void ini(const std::wstring& key)
 		{
 			i.lpszTitle = L"Black Desert Online";
 		}
-		const auto dl = SHBrowseForFolderW(&i);
+		const auto dl = SHBrowseForFolder(&i);
 		if (dl == nullptr)
 		{
 			exit(0);
 		}
-		SHGetPathFromIDListW(dl, n[0]);
-		WritePrivateProfileString(L"Path", key.c_str(), n[0], n[82]);
+		SHGetPathFromIDList(dl, b[0]);
+		WritePrivateProfileString(L"Path", key.c_str(), b[0], b[82]);
 	}
-}
-
-void game(const std::wstring& dir, const std::wstring& key)
-{
-	for (int i = 0; i < 57; i++)
-	{
-		*n[i] = '\0';
-	}
-	ini(key);
-	AppendFile(0, dir);
-	CombinePath(41, 0, L"D3DCompiler_42.dll");
-	CombinePath(42, 0, L"d3dx9_42.dll");
-	CombinePath(43, 0, L"d3dx11_42.dll");
-	CombinePath(44, 0, L"msvcp140.dll");
-	CombinePath(45, 0, L"ucrtbase.dll");
-	CombinePath(46, 0, L"vcruntime140.dll");
-	CombinePath(47, 0, L"d3dcompiler_43.dll");
-	CombinePath(48, 0, L"d3dcompiler_47.dll");
-	CombinePath(49, 0, L"concrt140.dll");
-	CombinePath(52, 0, L"vccorlib140.dll");
-	CombinePath(53, 0, L"mfc140u.dll");
-	CombinePath(54, 0, L"mfcm140u.dll");
-	CombinePath(55, 0, L"vcomp140.dll");
-	CombinePath(56, 0, L"vccorlib140.dll");
-	CombinePath(57, 0, L"d3dcompiler_46.dll");
 }
 
 void dota(bool restore)
 {
 	ProcessTerminate(L"dota2.exe");
-	*n[1] = '\0';
-	*n[2] = '\0';
+	*b[1] = '\0';
+	*b[2] = '\0';
 	ini(L"d2");
 	CombinePath(1, 0, L"D3DCompiler_47.dll");
 	CombinePath(2, 0, L"embree3.dll");
 	if (restore)
 	{
-		Grab(L"r/dota/d3dcompiler_47.dlll", 1);
-		Grab(L"r/dota/embree3.dll", 2);
+		URL(L"r/dota/d3dcompiler_47.dlll", 1);
+		URL(L"r/dota/embree3.dll", 2);
 	}
 	else
 	{
-		Grab(L"6/D3DCompiler_47.dll", 1);
-		Grab(L"6/embree4.dll", 2);
+		URL(L"6/D3DCompiler_47.dll", 1);
+		URL(L"6/embree4.dll", 2);
 
 	}
 	sei = {};
@@ -274,11 +256,11 @@ void lineage2(bool restore)
 {
 	for (auto i = 0; i < 10; i++)
 	{
-		*n[i] = '\0';
+		*b[i] = '\0';
 	}
 	ProcessTerminate(L"L2.exe");
 	ini(L"l2");
-	AppendFile(8, n[0]);
+	AppendFile(8, b[0]);
 	AppendFile(8, L"gameManager\\gameManager.exe");
 	AppendFile(0, L"system");
 	CombinePath(1, 0, L"d3dcompiler_43.dll");
@@ -291,21 +273,21 @@ void lineage2(bool restore)
 
 	if (restore)
 	{
-		Grab(L"r/l2/d3dcompiler_43.dll", 1);
-		Grab(L"r/l2/d3dcompiler_47.dll", 2);
-		Grab(L"r/l2/D3DX9_40.dll", 5);
-		Grab(L"r/l2/vcomp120.dll", 4);
-		Grab(L"r/l2/vcomp140.dll", 6);
-		Grab(L"r/l2/vcruntime140.dll", 7);
+		URL(L"r/l2/d3dcompiler_43.dll", 1);
+		URL(L"r/l2/d3dcompiler_47.dll", 2);
+		URL(L"r/l2/D3DX9_40.dll", 5);
+		URL(L"r/l2/vcomp120.dll", 4);
+		URL(L"r/l2/vcomp140.dll", 6);
+		URL(L"r/l2/vcruntime140.dll", 7);
 	}
 	else
 	{
-		Grab(L"D3DCompiler_47.dll", 1);
-		Grab(L"D3DCompiler_47.dll", 2);
-		Grab(L"D3DX9_43.dll", 3);
-		Grab(L"vcomp120.dll", 4);
-		Grab(L"vcomp140.dll", 6);
-		Grab(L"vcruntime140.dll", 7);
+		URL(L"D3DCompiler_47.dll", 1);
+		URL(L"D3DCompiler_47.dll", 2);
+		URL(L"D3DX9_43.dll", 3);
+		URL(L"vcomp120.dll", 4);
+		URL(L"vcomp140.dll", 6);
+		URL(L"vcruntime140.dll", 7);
 	}
 
 	sei = {};
@@ -313,7 +295,7 @@ void lineage2(bool restore)
 	sei.fMask = 64;
 	sei.nShow = 5;
 	sei.lpParameters = L"run -l \"4game2.0\" -k \"l2 - eu\" -u \"https://eu-new.4game.com/lineage2\"";
-	sei.lpFile = n[8];
+	sei.lpFile = b[8];
 	sei.lpVerb = L"runas";
 	ShellExecuteEx(&sei);
 	if (sei.hProcess != nullptr)
@@ -328,79 +310,118 @@ void blackdesert(bool restore)
 	ProcessTerminate(L"BlackDesert32.exe");
 	ProcessTerminate(L"BlackDesert64.exe");
 	ini(L"bdo");
+	for (int i = 0; i < 57; i++)
+	{
+		*b[i] = '\0';
+	}
+
 	if (x64())
 	{
-		game(L"bin64", L"bdo");
+		AppendFile(0, L"bin64");
+		CombinePath(41, 0, L"D3DCompiler_42.dll");
+		CombinePath(42, 0, L"d3dx9_42.dll");
+		CombinePath(43, 0, L"d3dx11_42.dll");
+		CombinePath(44, 0, L"msvcp140.dll");
+		CombinePath(45, 0, L"ucrtbase.dll");
+		CombinePath(46, 0, L"vcruntime140.dll");
+		CombinePath(47, 0, L"d3dcompiler_43.dll");
+		CombinePath(48, 0, L"d3dcompiler_47.dll");
+		CombinePath(49, 0, L"concrt140.dll");
+		CombinePath(52, 0, L"vccorlib140.dll");
+		CombinePath(53, 0, L"mfc140u.dll");
+		CombinePath(54, 0, L"mfcm140u.dll");
+		CombinePath(55, 0, L"vcomp140.dll");
+		CombinePath(56, 0, L"vccorlib140.dll");
+		CombinePath(57, 0, L"d3dcompiler_46.dll");
 		if (restore)
 		{
-			Grab(L"r/bdo/x64/msvcp140.dll", 44);
-			Grab(L"r/bdo/x64/ucrtbase.dll", 45);
-			Grab(L"r/bdo/x64/vcruntime140.dll", 46);
-			Grab(L"r/bdo/x64/D3DCompiler_43.dll", 47);
-			Grab(L"r/bdo/x64/concrt140.dll", 49);
-			Grab(L"r/bdo/x64/mfc140u.dll", 53);
-			Grab(L"r/bdo/x64/mfcm140u.dll", 54);
-			Grab(L"r/bdo/x64/vcomp140.dll", 55);
-			Grab(L"r/bdo/x64/vccorlib140.dll", 56);
+			URL(L"r/bdo/x64/msvcp140.dll", 44);
+			URL(L"r/bdo/x64/ucrtbase.dll", 45);
+			URL(L"r/bdo/x64/vcruntime140.dll", 46);
+			URL(L"r/bdo/x64/D3DCompiler_43.dll", 47);
+			URL(L"r/bdo/x64/concrt140.dll", 49);
+			URL(L"r/bdo/x64/mfc140u.dll", 53);
+			URL(L"r/bdo/x64/mfcm140u.dll", 54);
+			URL(L"r/bdo/x64/vcomp140.dll", 55);
+			URL(L"r/bdo/x64/vccorlib140.dll", 56);
 			bulk_apimswindll(L"r/bdo/x64/");
 		}
 		else
 		{
-			Grab(L"6/msvcp140.dll", 44);
-			Grab(L"6/ucrtbase.dll", 45);
-			Grab(L"6/vcruntime140.dll", 46);
-			Grab(L"6/D3DCompiler_47.dll", 47);
-			Grab(L"6/concrt140.dll", 49);
-			Grab(L"6/mfc140u.dll", 53);
-			Grab(L"6/mfcm140u.dll", 54);
-			Grab(L"6/vcomp140.dll", 55);
-			Grab(L"6/vccorlib140.dll", 56);
+			URL(L"6/msvcp140.dll", 44);
+			URL(L"6/ucrtbase.dll", 45);
+			URL(L"6/vcruntime140.dll", 46);
+			URL(L"6/D3DCompiler_47.dll", 47);
+			URL(L"6/concrt140.dll", 49);
+			URL(L"6/mfc140u.dll", 53);
+			URL(L"6/mfcm140u.dll", 54);
+			URL(L"6/vcomp140.dll", 55);
+			URL(L"6/vccorlib140.dll", 56);
 			bulk_apimswindll(L"6/");
 		}
 		if (restore)
 		{
-			Grab(L"r/bdo/main/d3dcompiler_43.dll", 47);
-			Grab(L"r/bdo/main/d3dcompiler_46.dll", 57);
+			URL(L"r/bdo/main/d3dcompiler_43.dll", 47);
+			URL(L"r/bdo/main/d3dcompiler_46.dll", 57);
 		}
 		else
 		{
-			Grab(L"D3DCompiler_47.dll", 47);
-			Grab(L"D3DCompiler_47.dll", 57);
+			URL(L"D3DCompiler_47.dll", 47);
+			URL(L"D3DCompiler_47.dll", 57);
 		}
 	}
 	else
 	{
-		game(L"bin", L"bdo");
+		for (int i = 0; i < 57; i++)
+		{
+			*b[i] = '\0';
+		}
+		AppendFile(0, L"bin");
+		CombinePath(41, 0, L"D3DCompiler_42.dll");
+		CombinePath(42, 0, L"d3dx9_42.dll");
+		CombinePath(43, 0, L"d3dx11_42.dll");
+		CombinePath(44, 0, L"msvcp140.dll");
+		CombinePath(45, 0, L"ucrtbase.dll");
+		CombinePath(46, 0, L"vcruntime140.dll");
+		CombinePath(47, 0, L"d3dcompiler_43.dll");
+		CombinePath(48, 0, L"d3dcompiler_47.dll");
+		CombinePath(49, 0, L"concrt140.dll");
+		CombinePath(52, 0, L"vccorlib140.dll");
+		CombinePath(53, 0, L"mfc140u.dll");
+		CombinePath(54, 0, L"mfcm140u.dll");
+		CombinePath(55, 0, L"vcomp140.dll");
+		CombinePath(56, 0, L"vccorlib140.dll");
+		CombinePath(57, 0, L"d3dcompiler_46.dll");
 		if (restore)
 		{
 			bulk_apimswindll(L"r/bdo/");
-			Grab(L"r/bdo/msvcp140.dll", 44);
-			Grab(L"r/bdo/ucrtbase.dll", 45);
-			Grab(L"r/bdo/vcruntime140.dll", 46);
-			Grab(L"r/bdo/D3DCompiler_43.dll", 47);
-			Grab(L"r/bdo/concrt140.dll", 49);
-			Grab(L"r/bdo/mfc140u.dll", 53);
-			Grab(L"r/bdo/mfcm140u.dll", 54);
-			Grab(L"r/bdo/vcomp140.dll", 55);
-			Grab(L"r/bdo/vccorlib140.dll", 56);
+			URL(L"r/bdo/msvcp140.dll", 44);
+			URL(L"r/bdo/ucrtbase.dll", 45);
+			URL(L"r/bdo/vcruntime140.dll", 46);
+			URL(L"r/bdo/D3DCompiler_43.dll", 47);
+			URL(L"r/bdo/concrt140.dll", 49);
+			URL(L"r/bdo/mfc140u.dll", 53);
+			URL(L"r/bdo/mfcm140u.dll", 54);
+			URL(L"r/bdo/vcomp140.dll", 55);
+			URL(L"r/bdo/vccorlib140.dll", 56);
 		}
 		else
 		{
 			bulk_apimswindll(L"");
-			Grab(L"msvcp140.dll", 44);
-			Grab(L"ucrtbase.dll", 45);
-			Grab(L"vcruntime140.dll", 46);
-			Grab(L"D3DCompiler_47.dll", 47);
-			Grab(L"concrt140.dll", 49);
-			Grab(L"mfc140u.dll", 53);
-			Grab(L"mfcm140u.dll", 54);
-			Grab(L"vcomp140.dll", 55);
-			Grab(L"vccorlib140.dll", 56);
+			URL(L"msvcp140.dll", 44);
+			URL(L"ucrtbase.dll", 45);
+			URL(L"vcruntime140.dll", 46);
+			URL(L"D3DCompiler_47.dll", 47);
+			URL(L"concrt140.dll", 49);
+			URL(L"mfc140u.dll", 53);
+			URL(L"mfcm140u.dll", 54);
+			URL(L"vcomp140.dll", 55);
+			URL(L"vccorlib140.dll", 56);
 		}
 
 	}
 
-	game(L"", L"bdo");
+	ini(L"bdo");
 	sei = {};
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 	sei.fMask = 64;
@@ -419,7 +440,7 @@ void elderscrolls_online(bool restore)
 {
 	for (int i = 0; i < 3; i++)
 	{
-		*n[i] = '\0';
+		*b[i] = '\0';
 	}
 	ProcessTerminate(L"eso64.exe");
 	ini(L"eso");
@@ -428,18 +449,18 @@ void elderscrolls_online(bool restore)
 	
 	if (restore)
 	{
-		Grab(L"r/teso/d3dcompiler_47.dll", 1);
+		URL(L"r/teso/d3dcompiler_47.dll", 1);
 	}
 	else
 	{
-		Grab(L"6/D3DCompiler_47.dll", 1);
+		URL(L"6/D3DCompiler_47.dll", 1);
 	}
 
 	sei = {};
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 	sei.fMask = 64;
 	sei.nShow = 5;
-	sei.lpFile = n[2];
+	sei.lpFile = b[2];
 
 	ShellExecuteEx(&sei);
 	if (sei.hProcess != nullptr)
@@ -453,7 +474,7 @@ void worldoftanks(bool restore)
 {
 	for (int i = 0; i < 46; i++)
 	{
-		*n[i] = '\0';
+		*b[i] = '\0';
 	}
 	ini(L"wt");
 	wchar_t world_of_tanks[261] = L"WorldOfTanks.exe";
@@ -467,21 +488,21 @@ void worldoftanks(bool restore)
 	CombinePath(46, 45, L"ucrtbase.dll");
 	if (restore)
 	{
-		Grab(L"r/wg/concrt140.dll", 41);
-		Grab(L"r/wg/msvcp140.dll", 42);
-		Grab(L"r/wg/tbb12.dll", 43);
-		Grab(L"r/wg/vcruntime140.dll", 44);
-		Grab(L"r/wg/ucrtbase.dll", 46);
+		URL(L"r/wg/concrt140.dll", 41);
+		URL(L"r/wg/msvcp140.dll", 42);
+		URL(L"r/wg/tbb12.dll", 43);
+		URL(L"r/wg/vcruntime140.dll", 44);
+		URL(L"r/wg/ucrtbase.dll", 46);
 		AppendFile(0, L"system");
 		bulk_apimswindll(L"r/wg/");
 	}
 	else
 	{
-		Grab(L"6/concrt140.dll", 41);
-		Grab(L"6/msvcp140.dll", 42);
-		Grab(L"6/tbb12.dll", 43);
-		Grab(L"6/vcruntime140.dll", 44);
-		Grab(L"6/ucrtbase.dll", 46);
+		URL(L"6/concrt140.dll", 41);
+		URL(L"6/msvcp140.dll", 42);
+		URL(L"6/tbb12.dll", 43);
+		URL(L"6/vcruntime140.dll", 44);
+		URL(L"6/ucrtbase.dll", 46);
 		AppendFile(0, L"system");
 		bulk_apimswindll(L"6/");
 	}
@@ -503,7 +524,7 @@ void worldofwarships(bool restore)
 {
 	for (int i = 0; i < 46; i++)
 	{
-		*n[i] = '\0';
+		*b[i] = '\0';
 	}
 	ini(L"ww");
 	wchar_t world_of_warships[261] = L"WorldOfWarships.exe";
@@ -517,22 +538,22 @@ void worldofwarships(bool restore)
 	if (restore)
 	{
 		bulk_apimswindll(L"r/wg/");
-		Grab(L"r/wg/msvcp140.dll", 41);
-		Grab(L"r/wg/ucrtbase.dll", 42);
-		Grab(L"r/wg/vcruntime140.dll", 43);
+		URL(L"r/wg/msvcp140.dll", 41);
+		URL(L"r/wg/ucrtbase.dll", 42);
+		URL(L"r/wg/vcruntime140.dll", 43);
 		AppendFile(0, L"cef");
-		Grab(L"r/wg/d3dcompiler_43.dll", 45);
-		Grab(L"r/wg/d3dcompiler_47.dll", 46);
+		URL(L"r/wg/d3dcompiler_43.dll", 45);
+		URL(L"r/wg/d3dcompiler_47.dll", 46);
 	}
 	else
 	{
 		bulk_apimswindll(L"6/");
-		Grab(L"msvcp140.dll", 41);
-		Grab(L"ucrtbase.dll", 42);
-		Grab(L"vcruntime140.dll", 43);
+		URL(L"msvcp140.dll", 41);
+		URL(L"ucrtbase.dll", 42);
+		URL(L"vcruntime140.dll", 43);
 		AppendFile(0, L"cef");
-		Grab(L"D3DCompiler_47.dll", 45);
-		Grab(L"D3DCompiler_47.dll", 46);
+		URL(L"D3DCompiler_47.dll", 45);
+		URL(L"D3DCompiler_47.dll", 46);
 	}
 	ini(L"ww");
 	sei = {};
@@ -554,7 +575,7 @@ void gameloop(bool restore)
 	ProcessTerminate(L"QQExternal.exe");
 	for (auto i = 0; i < 44; i++)
 	{
-		*n[i] = '\0';
+		*b[i] = '\0';
 	}
 	ini(L"gl");
 	CombinePath(40, 0, L"msvcp140.dll");
@@ -564,18 +585,18 @@ void gameloop(bool restore)
 	if (restore)
 	{
 		bulk_apimswindll(L"r/gameloop");
-		Grab(L"r/gameloop/msvcp140.dll", 40);
-		Grab(L"r/gameloop/ucrtbase.dll", 41);
-		Grab(L"r/gameloop/vcomp140.dll", 42);
-		Grab(L"r/gameloop/vcruntime140.dll", 43);
+		URL(L"r/gameloop/msvcp140.dll", 40);
+		URL(L"r/gameloop/ucrtbase.dll", 41);
+		URL(L"r/gameloop/vcomp140.dll", 42);
+		URL(L"r/gameloop/vcruntime140.dll", 43);
 	}
 	else
 	{
 		bulk_apimswindll(L"");
-		Grab(L"msvcp140.dll", 40);
-		Grab(L"ucrtbase.dll", 41);
-		Grab(L"vcomp140.dll", 42);
-		Grab(L"vcruntime140.dll", 43);
+		URL(L"msvcp140.dll", 40);
+		URL(L"ucrtbase.dll", 41);
+		URL(L"vcomp140.dll", 42);
+		URL(L"vcruntime140.dll", 43);
 	}
 	sei = {};
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
@@ -609,17 +630,17 @@ void lol(bool restore)
 	CombinePath(55, 54, L"d3dcompiler_47.dll");
 	if (restore)
 	{
-		Grab(L"r/lol/d3dcompiler_47.dl", 55);
+		URL(L"r/lol/d3dcompiler_47.dl", 55);
 	}
 	else
 	{
 		if (x64())
 		{
-			Grab(L"6/D3DCompiler_47.dll", 55);
+			URL(L"6/D3DCompiler_47.dll", 55);
 		}
 		else
 		{
-			Grab(L"D3DCompiler_47.dll", 55);
+			URL(L"D3DCompiler_47.dll", 55);
 		}
 
 	}
@@ -643,45 +664,45 @@ void lol(bool restore)
 	if (restore)
 	{
 		bulk_apimswindll(L"r/lol/");
-		Grab(L"r/lol/concrt140.dll", 42);
-		Grab(L"r/lol/d3dcompiler_47.dll", 43);
-		Grab(L"r/lol/msvcp140.dll", 44);
-		Grab(L"r/lol/msvcp140_1.dll", 45);
-		Grab(L"r/lol/msvcp140_2.dll", 46);
-		Grab(L"r/lol/msvcp140_codecvt_ids.dll", 47);
-		Grab(L"r/lol/ucrtbase.dll", 48);
-		Grab(L"r/lol/vcruntime140.dll", 49);
-		Grab(L"r/lol/vcruntime140_1.dll", 50);
+		URL(L"r/lol/concrt140.dll", 42);
+		URL(L"r/lol/d3dcompiler_47.dll", 43);
+		URL(L"r/lol/msvcp140.dll", 44);
+		URL(L"r/lol/msvcp140_1.dll", 45);
+		URL(L"r/lol/msvcp140_2.dll", 46);
+		URL(L"r/lol/msvcp140_codecvt_ids.dll", 47);
+		URL(L"r/lol/ucrtbase.dll", 48);
+		URL(L"r/lol/vcruntime140.dll", 49);
+		URL(L"r/lol/vcruntime140_1.dll", 50);
 
-		Grab(L"r/lol/d3dcompiler_47.dll", 52);
-		Grab(L"r/lol/D3dx9_43.dll", 53);
-		Grab(L"r/lol/xinput1_3.dll", 54);
+		URL(L"r/lol/d3dcompiler_47.dll", 52);
+		URL(L"r/lol/D3dx9_43.dll", 53);
+		URL(L"r/lol/xinput1_3.dll", 54);
 	}
 	else
 	{
 		bulk_apimswindll(L"");
-		Grab(L"r/lol/concrt140.dll", 42);
-		Grab(L"r/lol/d3dcompiler_47.dll", 43);
-		Grab(L"r/lol/msvcp140.dll", 44);
-		Grab(L"r/lol/msvcp140_1.dll", 45);
-		Grab(L"r/lol/msvcp140_2.dll", 46);
-		Grab(L"r/lol/msvcp140_codecvt_ids.dll", 47);
-		Grab(L"r/lol/ucrtbase.dll", 48);
-		Grab(L"r/lol/vcruntime140.dll", 49);
-		Grab(L"r/lol/vcruntime140_1.dll", 50);
+		URL(L"r/lol/concrt140.dll", 42);
+		URL(L"r/lol/d3dcompiler_47.dll", 43);
+		URL(L"r/lol/msvcp140.dll", 44);
+		URL(L"r/lol/msvcp140_1.dll", 45);
+		URL(L"r/lol/msvcp140_2.dll", 46);
+		URL(L"r/lol/msvcp140_codecvt_ids.dll", 47);
+		URL(L"r/lol/ucrtbase.dll", 48);
+		URL(L"r/lol/vcruntime140.dll", 49);
+		URL(L"r/lol/vcruntime140_1.dll", 50);
 		if (x64())
 		{
-			Grab(L"6/D3DCompiler_47.dll", 43);
-			Grab(L"6/D3DCompiler_47.dll", 52);
+			URL(L"6/D3DCompiler_47.dll", 43);
+			URL(L"6/D3DCompiler_47.dll", 52);
 		}
 		else
 		{
-			Grab(L"D3DCompiler_47.dll", 43);
-			Grab(L"D3DCompiler_47.dll", 52);
+			URL(L"D3DCompiler_47.dll", 43);
+			URL(L"D3DCompiler_47.dll", 52);
 		}
-		Grab(L"r/lol/D3DCompiler_47.dll", 52);
-		Grab(L"r/lol/D3dx9_43.dll", 53);
-		Grab(L"r/lol/xinput1_3.dll", 54);
+		URL(L"r/lol/D3DCompiler_47.dll", 52);
+		URL(L"r/lol/D3dx9_43.dll", 53);
+		URL(L"r/lol/xinput1_3.dll", 54);
 	}
 
 	sei = {};
@@ -708,23 +729,23 @@ void smite(bool restore)
 	CombinePath(5, 0, L"d3dcompiler_46.dll");
 	if (restore)
 	{
-		Grab(L"r/smite/x64/tbbmalloc.dll", 1);
-		Grab(L"r/smite/x64/concrt140.dll", 2);
-		Grab(L"r/smite/x64/vccorlib140.dll", 3);
-		Grab(L"r/smite/x64/vcruntime140.dll", 4);
-		Grab(L"r/smite/x64/d3dcompiler_46.dll", 5);
+		URL(L"r/smite/x64/tbbmalloc.dll", 1);
+		URL(L"r/smite/x64/concrt140.dll", 2);
+		URL(L"r/smite/x64/vccorlib140.dll", 3);
+		URL(L"r/smite/x64/vcruntime140.dll", 4);
+		URL(L"r/smite/x64/d3dcompiler_46.dll", 5);
 	}
 	else
 	{
-		Grab(L"6/tbbmalloc.dll", 1);
-		Grab(L"6/concrt140.dll", 2);
-		Grab(L"6/vccorlib140.dll", 3);
-		Grab(L"6/vcruntime140.dll", 4);
-		Grab(L"6/D3DCompiler_47.dll", 5);
+		URL(L"6/tbbmalloc.dll", 1);
+		URL(L"6/concrt140.dll", 2);
+		URL(L"6/vccorlib140.dll", 3);
+		URL(L"6/vcruntime140.dll", 4);
+		URL(L"6/D3DCompiler_47.dll", 5);
 	}
 	for (auto i = 7; i < 12; i++)
 	{
-		*n[i] = '\0';
+		*b[i] = '\0';
 	}
 	CombinePath(7, 6, L"tbbmalloc.dll");
 	CombinePath(8, 6, L"concrt140.dll");
@@ -733,19 +754,19 @@ void smite(bool restore)
 	CombinePath(11, 6, L"d3dcompiler_46.dll");
 	if (restore)
 	{
-		Grab(L"r/smite/tbbmalloc.dll", 7);
-		Grab(L"r/smite/concrt140.dll", 8);
-		Grab(L"r/smite/vccorlib140.dll", 9);
-		Grab(L"r/smite/vcruntime140.dll", 10);
-		Grab(L"r/smite/d3dcompiler_46.dll", 11);
+		URL(L"r/smite/tbbmalloc.dll", 7);
+		URL(L"r/smite/concrt140.dll", 8);
+		URL(L"r/smite/vccorlib140.dll", 9);
+		URL(L"r/smite/vcruntime140.dll", 10);
+		URL(L"r/smite/d3dcompiler_46.dll", 11);
 	}
 	else
 	{
-		Grab(L"tbbmalloc.dll", 7);
-		Grab(L"concrt140.dll", 8);
-		Grab(L"vccorlib140.dll", 9);
-		Grab(L"vcruntime140.dll", 10);
-		Grab(L"D3DCompiler_47.dll", 11);
+		URL(L"tbbmalloc.dll", 7);
+		URL(L"concrt140.dll", 8);
+		URL(L"vccorlib140.dll", 9);
+		URL(L"vcruntime140.dll", 10);
+		URL(L"D3DCompiler_47.dll", 11);
 	}
 
 	sei = {};
@@ -767,32 +788,32 @@ void paladins(bool restore)
 	ProcessTerminate(L"PaladinsEAC.exe");
 	ProcessTerminate(L"ShippingPC - ChaosGame.exe");
 
-	*n[0] = '\0';
-	*n[1] = '\0';
+	*b[0] = '\0';
+	*b[1] = '\0';
 	ini(L"pl");
 	AppendFile(0, L"Win64");
 	CombinePath(1, 0, L"tbbmalloc.dll");
 	if (restore)
 	{
-		Grab(L"r/paladins/x64/tbbmalloc.dll", 1);
+		URL(L"r/paladins/x64/tbbmalloc.dll", 1);
 	}
 	else
 	{
-		Grab(L"6/tbbmalloc.dll", 1);
+		URL(L"6/tbbmalloc.dll", 1);
 	}
-	*n[0] = '\0';
-	*n[1] = '\0';
+	*b[0] = '\0';
+	*b[1] = '\0';
 	ini(L"pl");
 	AppendFile(0, L"Win32");
 	CombinePath(1, 0, L"tbbmalloc.dll");
 
 	if (restore)
 	{
-		Grab(L"r/paladins/tbbmalloc.dll", 1);
+		URL(L"r/paladins/tbbmalloc.dll", 1);
 	}
 	else
 	{
-		Grab(L"tbbmalloc.dll", 1);
+		URL(L"tbbmalloc.dll", 1);
 	}
 
 	sei = {};
@@ -810,25 +831,25 @@ void paladins(bool restore)
 
 void minecraft()
 {
-	*n[82] = '\0';
+	*b[82] = '\0';
 	AppendFile(82, std::filesystem::current_path());
 	if (x64())
 	{
 		AppendFile(82, L"jdk-22_windows-x64_bin.msi");
-		URLDownloadToFile(nullptr, L"https://download.oracle.com/java/22/latest/jdk-22_windows-x64_bin.exe", n[82], 0, nullptr);
+		CustomURL(L"https://download.oracle.com/java/22/latest/jdk-22_windows-x64_bin.exe", 82);
 	}
 
 	sei = {};
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 	sei.fMask = 64;
 	sei.nShow = 5;
-	sei.lpFile = n[82];
+	sei.lpFile = b[82];
 	ShellExecuteEx(&sei);
 	if (sei.hProcess != nullptr)
 	{
 		WaitForSingleObject(sei.hProcess, INFINITE);
 	}
-	std::filesystem::remove_all(n[0]);
+	std::filesystem::remove_all(b[0]);
 
 	MessageBox(nullptr,
 		L"Minecraft Launcher > Minecraft: Java Edition > Installations > Latest > Edit > More Options > Java Executable Path > <drive>:\\Program Files\\Java\\jdk-22\\bin\\javaw.exe", L"LoLUpdater", MB_OK);
@@ -836,30 +857,30 @@ void minecraft()
 
 void DirectX9()
 {
-	*n[82] = '\0';
+	*b[82] = '\0';
 	AppendFile(82, std::filesystem::current_path());
 	AppendFile(82, L"dxwebsetup.exe");
-	URLDownloadToFile(nullptr, L"https://download.microsoft.com/download/1/7/1/1718CCC4-6315-4D8E-9543-8E28A4E18C4C/dxwebsetup.exe", n[82], 0, nullptr);
+	CustomURL(L"https://download.microsoft.com/download/1/7/1/1718CCC4-6315-4D8E-9543-8E28A4E18C4C/dxwebsetup.exe", 82);
 	sei = {};
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 	sei.fMask = 64;
 	sei.nShow = 5;
 	sei.lpParameters = L"/q";
-	sei.lpFile = n[82];
+	sei.lpFile = b[82];
 	ShellExecuteEx(&sei);
 	if (sei.hProcess != nullptr)
 	{
 		WaitForSingleObject(sei.hProcess, INFINITE);
 	}
-	std::filesystem::remove_all(n[82]);
+	std::filesystem::remove_all(b[82]);
 }
 
 void winaio(bool restore)
 {
-	*n[0] = '\0';
+	*b[0] = '\0';
 	AppendFile(0, std::filesystem::current_path());
 	AppendFile(0, L"VisualCppRedist_AIO_x86_x64.exe");
-	URLDownloadToFile(nullptr, L"https://github.com/abbodi1406/vcredist/releases/download/v0.79.0/VisualCppRedist_AIO_x86_x64.exe", n[0], 0, nullptr);
+	CustomURL(L"https://github.com/abbodi1406/vcredist/releases/download/v0.79.0/VisualCppRedist_AIO_x86_x64.exe", 0);
 	sei = {};
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 	sei.fMask = 64;
@@ -872,72 +893,72 @@ void winaio(bool restore)
 	{
 		sei.lpParameters = L"/ai";
 	}
-	sei.lpFile = n[0];
+	sei.lpFile = b[0];
 	ShellExecuteEx(&sei);
 	if (sei.hProcess != nullptr)
 	{
 		WaitForSingleObject(sei.hProcess, INFINITE);
 	}
-	std::filesystem::remove_all(n[0]);
+	std::filesystem::remove_all(b[0]);
 }
 
 void fbneo()
 {
-	*n[0] = '\0';
-	*n[2] = '\0';
+	*b[0] = '\0';
+	*b[2] = '\0';
 	AppendFile(0, std::filesystem::current_path());
 	AppendFile(0, L"unzip.exe");
-	Grab(L"unzip.exe", 0);
+	URL(L"unzip.exe", 0);
 	if (x64())
 	{
 		AppendFile(2, std::filesystem::current_path());
 		AppendFile(2, L"FBNeo.zip");
-		std::filesystem::remove_all(n[2]);
-		URLDownloadToFile(nullptr, L"https://github.com/finalburnneo/FBNeo/releases/download/latest/Windows.x64.zip", n[2], 0, nullptr);
+		std::filesystem::remove_all(b[2]);
+		CustomURL(L"https://github.com/finalburnneo/FBNeo/releases/download/latest/Windows.x64.zip", 2);
 	}
 	else
 	{
 		AppendFile(2, std::filesystem::current_path());
 		AppendFile(2, L"FBNeo.zip");
-		std::filesystem::remove_all(n[2]);
-		URLDownloadToFile(nullptr, L"https://github.com/finalburnneo/FBNeo/releases/download/latest/Windows.x32.zip", n[2], 0, nullptr);
+		std::filesystem::remove_all(b[2]);
+		CustomURL(L"https://github.com/finalburnneo/FBNeo/releases/download/latest/Windows.x32.zip", 2);
 	}
 	sei = {};
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 	sei.fMask = 64;
 	sei.nShow = 5;
-	sei.lpFile = n[0];
+	sei.lpFile = b[0];
 	sei.lpParameters = L"-o FBNeo.zip -d FBNeo";
 	ShellExecuteEx(&sei);
 	if (sei.hProcess != nullptr)
 	{
 		WaitForSingleObject(sei.hProcess, INFINITE);
 	}
-	std::filesystem::remove_all(n[0]);
-	std::filesystem::remove_all(n[2]);
+	std::filesystem::remove_all(b[0]);
+	std::filesystem::remove_all(b[2]);
 	exit(0);
 }
 
 void mame()
 {
-	*n[82] = '\0';
-	AppendFile(82, std::filesystem::current_path());
-	AppendFile(82, L"MAME x64 (0.263).exe");
 	if (x64())
 	{
-		URLDownloadToFile(nullptr, L"https://github.com/mamedev/mame/releases/download/mame0263/mame0263b_64bit.exe", n[82], 0, nullptr);
+		*b[82] = '\0';
+		AppendFile(82, std::filesystem::current_path());
+		AppendFile(82, L"MAME x64 (0.263).exe");
+		CustomURL(L"https://github.com/mamedev/mame/releases/download/mame0263/mame0263b_64bit.exe", 82);
+		sei = {};
+		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
+		sei.fMask = 64;
+		sei.nShow = 5;
+		sei.lpFile = b[82];
+		ShellExecuteEx(&sei);
+		if (sei.hProcess != nullptr)
+		{
+			WaitForSingleObject(sei.hProcess, INFINITE);
+		}
+		std::filesystem::remove_all(b[0]);
 	}
-	sei = {};
-	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
-	sei.fMask = 64;
-	sei.nShow = 5;
-	sei.lpFile = n[82];
-	ShellExecuteEx(&sei);
-	if (sei.hProcess != nullptr)
-	{
-		WaitForSingleObject(sei.hProcess, INFINITE);
-	}
-	std::filesystem::remove_all(n[0]);
 	exit(0);
 }
 
@@ -945,9 +966,9 @@ void mesen()
 {
 	if (x64())
 	{
-		*n[0] = '\0';
-		*n[1] = '\0';
-		*n[2] = '\0';
+		*b[0] = '\0';
+		*b[1] = '\0';
+		*b[2] = '\0';
 		AppendFile(0, std::filesystem::current_path());
 		AppendFile(0, L"7z.exe");
 		AppendFile(1, std::filesystem::current_path());
@@ -955,15 +976,15 @@ void mesen()
 		AppendFile(2, std::filesystem::current_path());
 		AppendFile(2, L"dependency.exe");
 
-		Grab(L"7z.exe", 0);
-		Grab(L"windowsdesktop-runtime-6.0.28-win-x64.exe", 2);
-		URLDownloadToFile(nullptr, L"https://nightly.link/SourMesen/Mesen2/workflows/build/master/Mesen%20%28Windows%29.zip", n[1], 0, nullptr);
+		URL(L"7z.exe", 0);
+		URL(L"windowsdesktop-runtime-6.0.28-win-x64.exe", 2);
+		CustomURL(L"https://nightly.link/SourMesen/Mesen2/workflows/build/master/Mesen%20%28Windows%29.zip", 1);
 
 		sei = {};
 		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 		sei.fMask = 64;
 		sei.nShow = 5;
-		sei.lpFile = n[0];
+		sei.lpFile = b[0];
 		sei.lpParameters = L"x Mesen.zip -y";
 		ShellExecuteEx(&sei);
 		if (sei.hProcess != nullptr)
@@ -976,7 +997,7 @@ void mesen()
 		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 		sei.fMask = 64;
 		sei.nShow = 5;
-		sei.lpFile = n[2];
+		sei.lpFile = b[2];
 		sei.lpParameters = L"/s";
 		ShellExecuteEx(&sei);
 		if (sei.hProcess != nullptr)
@@ -984,9 +1005,9 @@ void mesen()
 			WaitForSingleObject(sei.hProcess, INFINITE);
 		}
 
-		std::filesystem::remove_all(n[0]);
-		std::filesystem::remove_all(n[1]);
-		std::filesystem::remove_all(n[2]);
+		std::filesystem::remove_all(b[0]);
+		std::filesystem::remove_all(b[1]);
+		std::filesystem::remove_all(b[2]);
 		exit(0);
 	}
 }
@@ -994,30 +1015,30 @@ void mesen()
 
 void hbmame()
 {
-	*n[0] = '\0';
-	*n[1] = '\0';
-	AppendFile(0, std::filesystem::current_path());
-	AppendFile(0, L"7z.exe");
-	Grab(L"7z.exe", 0);
 	if (x64())
 	{
+		*b[0] = '\0';
+		*b[1] = '\0';
+		AppendFile(0, std::filesystem::current_path());
+		AppendFile(0, L"7z.exe");
+		URL(L"7z.exe", 0);
 		AppendFile(1, std::filesystem::current_path());
 		AppendFile(1, L"HBMAME.7z");
-		URLDownloadToFile(nullptr, L"https://hbmame.1emulation.com/hbmameui17.7z", n[1], 0, nullptr);
+		CustomURL(L"https://hbmame.1emulation.com/hbmameui17.7z", 1);
+		sei = {};
+		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
+		sei.fMask = 64;
+		sei.nShow = 5;
+		sei.lpFile = b[0];
+		sei.lpParameters = L"x HBMAME.7z -y";
+		ShellExecuteEx(&sei);
+		if (sei.hProcess != nullptr)
+		{
+			WaitForSingleObject(sei.hProcess, INFINITE);
+		}
+		std::filesystem::remove_all(b[1]);
+		std::filesystem::remove_all(b[0]);
 	}
-	sei = {};
-	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
-	sei.fMask = 64;
-	sei.nShow = 5;
-	sei.lpFile = n[0];
-	sei.lpParameters = L"x HBMAME.7z -y";
-	ShellExecuteEx(&sei);
-	if (sei.hProcess != nullptr)
-	{
-		WaitForSingleObject(sei.hProcess, INFINITE);
-	}
-	std::filesystem::remove_all(n[1]);
-	std::filesystem::remove_all(n[0]);
 	exit(0);
 }
 
@@ -1028,11 +1049,11 @@ void trackmania(bool restore)
 	CombinePath(1, 0, L"d3dcompiler_47.dll");
 	if (restore)
 	{
-		Grab(L"r/track/d3dcompiler_47.dll", 1);
+		URL(L"r/track/d3dcompiler_47.dll", 1);
 	}
 	else
 	{
-		Grab(L"d3dcompiler_47.dll", 1);
+		URL(L"D3DCompiler_47.dll", 1);
 	}
 
 	sei = {};
