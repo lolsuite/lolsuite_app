@@ -1212,8 +1212,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				dota(false);
 				break;
 			case 3:
-				MessageBox(nullptr,
-					L"Uninstall Java through Control Panel", L"LoLUpdater", MB_OK);
+				MessageBox(nullptr, L"Uninstall Java through Control Panel", L"LoLUpdater", MB_OK);
 				break;
 			case 4:
 				blackdesert(false);

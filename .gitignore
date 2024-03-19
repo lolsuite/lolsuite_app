@@ -38,3 +38,4 @@ LoLUpdater
 # Recreating files
 *.aps
 *.user
+*.sln
