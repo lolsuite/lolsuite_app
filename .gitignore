@@ -34,6 +34,7 @@
 # Folders
 .vs
 LoLUpdater
+Release
 
 # Recreating files
 *.aps
