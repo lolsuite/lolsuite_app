@@ -666,7 +666,7 @@ void lol(bool restore)
 	CombinePath(52, 51, L"D3DCompiler_47.dll");
 	CombinePath(53, 51, L"D3dx9_43.dll");
 	CombinePath(54, 51, L"xinput1_3.dll");
-
+	CombinePath(55, 51, L"tbb.dll");
 	if (restore)
 	{
 		bulk_apimswindll(L"r/lol/");
@@ -679,7 +679,6 @@ void lol(bool restore)
 		URL(L"r/lol/ucrtbase.dll", 48);
 		URL(L"r/lol/vcruntime140.dll", 49);
 		URL(L"r/lol/vcruntime140_1.dll", 50);
-
 		URL(L"r/lol/d3dcompiler_47.dll", 52);
 		URL(L"r/lol/D3dx9_43.dll", 53);
 		URL(L"r/lol/xinput1_3.dll", 54);
@@ -700,11 +699,13 @@ void lol(bool restore)
 		{
 			URL(L"6/D3DCompiler_47.dll", 43);
 			URL(L"6/D3DCompiler_47.dll", 52);
+			URL(L"6/tbb12.dll", 55);
 		}
 		else
 		{
 			URL(L"D3DCompiler_47.dll", 43);
 			URL(L"D3DCompiler_47.dll", 52);
+			URL(L"tbb12.dll", 55);
 		}
 		URL(L"r/lol/D3DCompiler_47.dll", 52);
 		URL(L"r/lol/D3dx9_43.dll", 53);
