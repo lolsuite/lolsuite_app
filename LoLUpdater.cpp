@@ -138,7 +138,7 @@ void bulk_apimswindll(const wchar_t* url)
 	for (int i = 0; i < 40; i++)
 	{
 		CombinePath(i + 1, 0, apimswin[i]);
-		URL(std::wstring(url + std::wstring(apimswin[i])).data(), i + 1);
+		URL(std::wstring(url + std::wstring(apimswin[i])), i + 1);
 	}
 }
 
