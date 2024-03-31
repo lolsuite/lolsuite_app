@@ -914,8 +914,8 @@ void fbneo()
 	*b[0] = '\0';
 	*b[2] = '\0';
 	AppendFile(0, std::filesystem::current_path());
-	AppendFile(0, L"unzip.exe");
-	URL(L"unzip.exe", 0);
+	AppendFile(0, L"7z.exe");
+	URL(L"7z.exe", 0);
 	if (x64())
 	{
 		AppendFile(2, std::filesystem::current_path());
@@ -935,7 +935,7 @@ void fbneo()
 	sei.fMask = 64;
 	sei.nShow = 5;
 	sei.lpFile = b[0];
-	sei.lpParameters = L"-o FBNeo.zip -d FBNeo";
+	sei.lpParameters = L"x FBNeo.zip -y";
 	ShellExecuteEx(&sei);
 	if (sei.hProcess != nullptr)
 	{
