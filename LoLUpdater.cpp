@@ -1,4 +1,5 @@
 #define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
 #include <filesystem>
 #include <ShlObj_core.h>
 #include <tlhelp32.h>
