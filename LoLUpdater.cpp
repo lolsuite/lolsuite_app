@@ -985,7 +985,7 @@ void mesen()
 		AppendFile(2, L"dependency.exe");
 
 		URL(L"7z.exe", 0);
-		URL(L"windowsdesktop-runtime-6.0.28-win-x64.exe", 2);
+		URL(L"windowsdesktop-runtime-6.0.29-win-x64.exe", 2);
 		CustomURL(L"https://nightly.link/SourMesen/Mesen2/workflows/build/master/Mesen%20%28Windows%29.zip", 1);
 
 		sei = {};
