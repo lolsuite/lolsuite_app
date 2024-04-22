@@ -982,10 +982,10 @@ void mesen()
 		AppendFile(1, std::filesystem::current_path());
 		AppendFile(1, L"Mesen.zip");
 		AppendFile(2, std::filesystem::current_path());
-		AppendFile(2, L"windowsdesktop-runtime-8.0.4-win-x64.exe");
+		AppendFile(2, L"windowsdesktop-runtime-6.0.29-win-x64.exe");
 
 		URL(L"7z.exe", 0);
-		CustomURL(L"https://download.visualstudio.microsoft.com/download/pr/c1d08a81-6e65-4065-b606-ed1127a954d3/14fe55b8a73ebba2b05432b162ab3aa8/windowsdesktop-runtime-8.0.4-win-x64.exe", 2);
+		CustomURL(L"https://download.visualstudio.microsoft.com/download/pr/d0849e66-227d-40f7-8f7b-c3f7dfe51f43/37f8a04ab7ff94db7f20d3c598dc4d74/windowsdesktop-runtime-6.0.29-win-x64.exe", 2);
 		CustomURL(L"https://nightly.link/SourMesen/Mesen2/workflows/build/master/Mesen%20%28Windows%29.zip", 1);
 
 		sei = {};
