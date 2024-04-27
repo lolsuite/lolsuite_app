@@ -35,6 +35,6 @@ jobs:
     - name: Upload
       uses: actions/upload-artifact@v4
       with:
-        name: assets-for-download
+        name: LoLUpdater
         path: Release/LoLUpdater.exe
         if-no-files-found: error
