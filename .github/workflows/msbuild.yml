@@ -36,5 +36,5 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: LoLUpdater
-        path: LoLUpdater.exe
+        path: build/LoLUpdater.exe
         retention-days: 5
