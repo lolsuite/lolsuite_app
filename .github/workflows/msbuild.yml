@@ -34,6 +34,7 @@ jobs:
       
     - name: Upload
       run: mkdir downloads
+      run: cd downloads
 
     - name: Upload
       uses: actions/upload-artifact@v4
