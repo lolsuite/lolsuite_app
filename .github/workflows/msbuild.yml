@@ -33,11 +33,7 @@ jobs:
       run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
       
     - name: Upload
-      run: mkdir downloads
-      run: cd downloads
-
-    - name: Upload
       uses: actions/upload-artifact@v4
       with:
         name: assets-for-download
-        path: downloads
+        path: .
