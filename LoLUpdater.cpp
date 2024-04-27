@@ -888,7 +888,7 @@ void winaio(bool restore)
 	*b[0] = '\0';
 	AppendFile(0, std::filesystem::current_path());
 	AppendFile(0, L"VisualCppRedist_AIO_x86_x64.exe");
-	CustomURL(L"https://github.com/abbodi1406/vcredist/releases/download/v0.80.0/VisualCppRedist_AIO_x86_x64.exe", 0);
+	CustomURL(L"https://github.com/abbodi1406/vcredist/releases/download/v0.81.0/VisualCppRedist_AIO_x86_x64.exe", 0);
 	sei = {};
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 	sei.fMask = 64;
