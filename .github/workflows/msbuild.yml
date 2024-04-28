@@ -15,7 +15,7 @@ permissions:
 jobs:
   build:
     runs-on: windows-latest
-    using: 'node20'
+    uses: node20
 
     steps:
     - uses: actions/checkout@v4
