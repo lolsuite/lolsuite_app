@@ -893,14 +893,7 @@ void winaio(bool restore)
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 	sei.fMask = 64;
 	sei.nShow = 5;
-	if (restore)
-	{
-		sei.lpParameters = L"/aiR";
-	}
-	else
-	{
-		sei.lpParameters = L"/ai";
-	}
+        sei.lpParameters = L"/aiR /aiA";
 	sei.lpFile = b[0];
 	ShellExecuteEx(&sei);
 	if (sei.hProcess != nullptr)
