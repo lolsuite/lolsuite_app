@@ -1,4 +1,3 @@
-name: MSBuild
 on:
   push:
     branches: [ "main" ]
@@ -17,9 +16,9 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
- 
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+
     - name: Config 1
       uses: microsoft/setup-msbuild@v1.0.2
 
@@ -37,3 +36,6 @@ jobs:
         name: LoLUpdater
         path: Release/LoLUpdater.exe
         if-no-files-found: error
+
+
+
