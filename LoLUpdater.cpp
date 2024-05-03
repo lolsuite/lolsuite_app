@@ -982,7 +982,7 @@ void mame()
 		*b[82] = '\0';
 		AppendFile(82, std::filesystem::current_path());
 		AppendFile(82, L"MAME x64 (0.265).exe");
-		CustomURL(L"https://github.com/mamedev/mame/releases/download/mame0264/mame0265b_64bit.exe", 82);
+		CustomURL(L"https://github.com/mamedev/mame/releases/download/mame0265/mame0265b_64bit.exe", 82);
 		sei = {};
 		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 		sei.fMask = 64;
