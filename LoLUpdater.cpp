@@ -76,6 +76,30 @@ std::wstring JoinPath(const int j, const std::wstring& add)
 	return (p / add).c_str();
 }
 
+bool CheckOneInstance()
+{
+
+	HANDLE  m_hStartEvent = CreateEventW(NULL, FALSE, FALSE, L"Global\\CSAPP");
+
+	if (m_hStartEvent == NULL)
+	{
+		CloseHandle(m_hStartEvent);
+		return false;
+	}
+
+
+	if (GetLastError() == ERROR_ALREADY_EXISTS) {
+
+		CloseHandle(m_hStartEvent);
+		m_hStartEvent = NULL;
+		MessageBox(nullptr,
+			L"You can only run one instance of LoLUpdater", L"LoLUpdater", MB_OK);
+		exit(0);
+	}
+	// the only instance, start in a usual way
+	return true;
+}
+
 void AppendFile(const int j, const std::wstring& add)
 {
 	std::filesystem::path p = b[j];
@@ -893,7 +917,18 @@ void winaio(bool restore)
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 	sei.fMask = 64;
 	sei.nShow = 5;
-        sei.lpParameters = L"/aiA /aiR";
+    sei.lpParameters = L"/aiR";
+	sei.lpFile = b[0];
+	ShellExecuteEx(&sei);
+	if (sei.hProcess != nullptr)
+	{
+		WaitForSingleObject(sei.hProcess, INFINITE);
+	}
+	sei = {};
+	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
+	sei.fMask = 64;
+	sei.nShow = 5;
+	sei.lpParameters = L"/aiA";
 	sei.lpFile = b[0];
 	ShellExecuteEx(&sei);
 	if (sei.hProcess != nullptr)
@@ -1122,6 +1157,8 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
 	hInst = hInstance;
+
+	CheckOneInstance();
 
 	HWND hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME, CW_USEDEFAULT,
 		CW_USEDEFAULT, 390, 130,
