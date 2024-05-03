@@ -62,7 +62,7 @@ std::wstring apimswin[] = {
 	L"api-ms-win-crt-string-l1-1-0.dll",
 	L"api-ms-win-crt-time-l1-1-0.dll",
 	L"api-ms-win-crt-utility-l1-1-0.dll"
-}; 
+};
 
 const wchar_t* box[18] = {
 	L"League of Legends", L"SMITE", L"DOTA2", L"Minecraft Java",
@@ -477,7 +477,7 @@ void elderscrolls_online(bool restore)
 	ini(L"eso");
 	CombinePath(1, 0, L"d3dcompiler_47.dll");
 	CombinePath(2, 0, L"eso64.exe");
-	
+
 	if (restore)
 	{
 		URL(L"r/teso/d3dcompiler_47.dll", 1);
@@ -917,7 +917,7 @@ void winaio(bool restore)
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 	sei.fMask = 64;
 	sei.nShow = 5;
-    sei.lpParameters = L"/aiR";
+	sei.lpParameters = L"/aiR";
 	sei.lpFile = b[0];
 	ShellExecuteEx(&sei);
 	if (sei.hProcess != nullptr)
@@ -1028,7 +1028,7 @@ void mesen()
 			WaitForSingleObject(sei.hProcess, INFINITE);
 		}
 
-		
+
 		sei = {};
 		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 		sei.fMask = 64;
