@@ -1248,7 +1248,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				mame();
 				break;
 			case 16:
-				winaio(false);
+				winaio();
 				break;
 			case 17:
 				DirectX9();
@@ -1309,7 +1309,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				mame();
 				break;
 			case 16:
-				winaio(true);
+				winaio();
 				break;
 			case 17:
 				DirectX9();
