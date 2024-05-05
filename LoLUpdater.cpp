@@ -883,8 +883,7 @@ void minecraft()
 	}
 	std::filesystem::remove_all(b[0]);
 
-	MessageBox(nullptr,
-		L"Minecraft Launcher > Minecraft: Java Edition > Installations > Latest > Edit > More Options > Java Executable Path > <drive>:\\Program Files\\Java\\jdk-22\\bin\\javaw.exe", L"LoLUpdater", MB_OK);
+	MessageBox(nullptr, L"Minecraft Launcher > Minecraft: Java Edition > Installations > Latest > Edit > More Options > Java Executable Path > <drive>:\\Program Files\\Java\\jdk-22\\bin\\javaw.exe", L"LoLUpdater", MB_OK);
 }
 
 void DirectX9()
@@ -1160,20 +1159,13 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 	CheckOneInstance();
 
-	HWND hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME, CW_USEDEFAULT,
-		CW_USEDEFAULT, 390, 130,
-		nullptr, nullptr, hInstance, nullptr);
+	HWND hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME, CW_USEDEFAULT, CW_USEDEFAULT, 390, 130, nullptr, nullptr, hInstance, nullptr);
 
-	CreateWindow(L"BUTTON", L"Patch", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, 10, 10, 75,
-		75, hWnd, reinterpret_cast<HMENU>(1), hInstance, nullptr);
+	CreateWindow(L"BUTTON", L"Patch", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, 10, 10, 75, 75, hWnd, reinterpret_cast<HMENU>(1), hInstance, nullptr);
 
-	CreateWindow(L"BUTTON", L"Restore", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, 290, 10, 75,
-		75, hWnd, reinterpret_cast<HMENU>(2), hInstance, nullptr);
+	CreateWindow(L"BUTTON", L"Restore", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, 290, 10, 75, 75, hWnd, reinterpret_cast<HMENU>(2), hInstance, nullptr);
 
-	HWND ComboBox = CreateWindow(WC_COMBOBOX, L"",
-		CBS_DROPDOWN | CBS_HASSTRINGS | WS_CHILD | WS_OVERLAPPED | WS_VISIBLE,
-		90, 10, 190, 365, hWnd, NULL, hInstance,
-		NULL);
+	HWND ComboBox = CreateWindow(WC_COMBOBOX, L"", CBS_DROPDOWN | CBS_HASSTRINGS | WS_CHILD | WS_OVERLAPPED | WS_VISIBLE, 90, 10, 190, 365, hWnd, NULL, hInstance, NULL);
 
 	for (auto& i : box)
 	{
@@ -1278,8 +1270,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				dota(true);
 				break;
 			case 3:
-				MessageBox(nullptr,
-					L"Uninstall Java through Control Panel", L"LoLUpdater", MB_OK);
+				MessageBox(nullptr, L"Uninstall Java through Control Panel", L"LoLUpdater", MB_OK);
 				break;
 			case 4:
 				blackdesert(true);
