@@ -92,8 +92,7 @@ bool CheckOneInstance()
 
 		CloseHandle(m_hStartEvent);
 		m_hStartEvent = NULL;
-		MessageBox(nullptr,
-			L"You can only run one instance of LoLUpdater", L"LoLUpdater", MB_OK);
+		MessageBox(nullptr, L"You can only run one instance of LoLUpdater", L"LoLUpdater", MB_OK);
 		exit(0);
 	}
 	// the only instance, start in a usual way
