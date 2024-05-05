@@ -906,17 +906,17 @@ void DirectX9()
 	std::filesystem::remove_all(b[82]);
 }
 
-void winaio(bool restore)
+void winaio()
 {
 	*b[0] = '\0';
 	AppendFile(0, std::filesystem::current_path());
 	AppendFile(0, L"VisualCppRedist_AIO_x86_x64.exe");
-	CustomURL(L"https://github.com/abbodi1406/vcredist/releases/download/v0.81.0/VisualCppRedist_AIO_x86_x64.exe", 0);
+	CustomURL(L"https://github.com/abbodi1406/vcredist/releases/download/v0.82.0/VisualCppRedist_AIO_x86_x64.exe", 0);
 	sei = {};
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 	sei.fMask = 64;
 	sei.nShow = 5;
-	sei.lpParameters = L"/aiR";
+	sei.lpParameters = L"/aiR /gm2";
 	sei.lpFile = b[0];
 	ShellExecuteEx(&sei);
 	if (sei.hProcess != nullptr)
@@ -927,7 +927,7 @@ void winaio(bool restore)
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 	sei.fMask = 64;
 	sei.nShow = 5;
-	sei.lpParameters = L"/aiA";
+	sei.lpParameters = L"/y /gm2";
 	sei.lpFile = b[0];
 	ShellExecuteEx(&sei);
 	if (sei.hProcess != nullptr)
