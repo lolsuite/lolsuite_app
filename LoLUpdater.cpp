@@ -67,7 +67,7 @@ std::wstring apimswin[] = {
 const wchar_t* box[18] = {
 	L"League of Legends", L"SMITE", L"DOTA2", L"Minecraft Java",
 	L"Black Desert Online", L"Paladins", L"World of Tanks", L"World of Warships", L"Lineage II",
-	L"Elder Scrolls Online", L"GameLoop", L"TrackMania : Next", L"Mesen2", L"FinalBurn Neo", L"HBMAME", L"MAME", L"VCRedist AIO", L"DirectX"
+	L"Elder Scrolls Online", L"GameLoop", L"TrackMania : Next", L"NES Emulator", L"FinalBurn Neo", L"HBMAME", L"MAME", L"VCRedist AIO", L"DirectX"
 };
 
 std::wstring JoinPath(const int j, const std::wstring& add)
