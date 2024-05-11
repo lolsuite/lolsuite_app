@@ -318,7 +318,6 @@ void lol(bool restore)
 			URL(L"D3DCompiler_47.dll", 52);
 			URL(L"tbb12.dll", 55);
 		}
-		URL(L"D3DCompiler_47.dll", 52);
 		URL(L"D3dx9_43.dll", 53);
 		URL(L"xinput1_3.dll", 54);
 	}
