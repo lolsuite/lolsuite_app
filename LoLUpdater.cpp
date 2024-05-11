@@ -64,10 +64,8 @@ std::wstring apimswin[] = {
 	L"api-ms-win-crt-utility-l1-1-0.dll"
 };
 
-const wchar_t* box[18] = {
-	L"League of Legends", L"SMITE", L"DOTA2", L"Minecraft Java",
-	L"Black Desert Online", L"Paladins", L"World of Tanks", L"World of Warships", L"Lineage II",
-	L"Elder Scrolls Online", L"GameLoop", L"TrackMania : Next", L"NES Emulator", L"FinalBurn Neo", L"HBMAME", L"MAME", L"VCRedist AIO", L"DirectX"
+const wchar_t* box[9] = {
+	L"League of Legends", L"DOTA2", L"Minecraft Java", L"NES Emulator", L"FinalBurn Neo", L"HBMAME", L"MAME", L"VCRedist AIO", L"DirectX"
 };
 
 std::wstring JoinPath(const int j, const std::wstring& add)
@@ -196,10 +194,6 @@ void ini(const std::wstring& key)
 	{
 		BROWSEINFO i{};
 		i.ulFlags = BIF_USENEWUI | BIF_NONEWFOLDERBUTTON;
-		if (key == L"track")
-		{
-			i.lpszTitle = L"Epic Games\\TrackmaniaNext";
-		}
 		if (key == L"ll")
 		{
 			i.lpszTitle = L"Riot Games";
@@ -207,38 +201,6 @@ void ini(const std::wstring& key)
 		if (key == L"d2")
 		{
 			i.lpszTitle = L"Program Files (x86)\\Steam\\steamapps\\common\\dota 2 beta\\game\\bin\\win64";
-		}
-		if (key == L"pl")
-		{
-			i.lpszTitle = L"Program Files (x86)\\Steam\\steamapps\\common\\Paladins\\Binaries";
-		}
-		if (key == L"sm")
-		{
-			i.lpszTitle = L"Program Files (x86)\\Steam\\steamapps\\common\\SMITE\\Binaries";
-		}
-		if (key == L"gl")
-		{
-			i.lpszTitle = L"TxGameAssistant\\AppMarket";
-		}
-		if (key == L"eso")
-		{
-			i.lpszTitle = L"The Elder Scrolls Online\\game\\client";
-		}
-		if (key == L"l2")
-		{
-			i.lpszTitle = L"4game\\Lineage II";
-		}
-		if (key == L"wt")
-		{
-			i.lpszTitle = L"World_of_Tanks_<region>\\win64";
-		}
-		if (key == L"ww")
-		{
-			i.lpszTitle = L"World_of_Warships\\bin\\*******\\win64";
-		}
-		if (key == L"bd")
-		{
-			i.lpszTitle = L"Black Desert Online";
 		}
 		const auto dl = SHBrowseForFolder(&i);
 		if (dl == nullptr)
@@ -282,365 +244,6 @@ void dota(bool restore)
 	exit(0);
 }
 
-void lineage2(bool restore)
-{
-	for (auto i = 0; i < 10; i++)
-	{
-		*b[i] = '\0';
-	}
-	ProcessTerminate(L"L2.exe");
-	ini(L"l2");
-	AppendFile(8, b[0]);
-	AppendFile(8, L"gameManager\\gameManager.exe");
-	AppendFile(0, L"system");
-	CombinePath(1, 0, L"d3dcompiler_43.dll");
-	CombinePath(2, 0, L"d3dcompiler_47.dll");
-	CombinePath(3, 0, L"D3DX9_43.dll");
-	CombinePath(4, 0, L"vcomp120.dll");
-	CombinePath(5, 0, L"D3DX9_40.dll");
-	CombinePath(6, 0, L"vcomp140.dll");
-	CombinePath(7, 0, L"vcruntime140.dll");
-
-	if (restore)
-	{
-		URL(L"r/l2/d3dcompiler_43.dll", 1);
-		URL(L"r/l2/d3dcompiler_47.dll", 2);
-		URL(L"r/l2/D3DX9_40.dll", 5);
-		URL(L"r/l2/vcomp120.dll", 4);
-		URL(L"r/l2/vcomp140.dll", 6);
-		URL(L"r/l2/vcruntime140.dll", 7);
-	}
-	else
-	{
-		URL(L"D3DCompiler_47.dll", 1);
-		URL(L"D3DCompiler_47.dll", 2);
-		URL(L"D3DX9_43.dll", 3);
-		URL(L"vcomp120.dll", 4);
-		URL(L"vcomp140.dll", 6);
-		URL(L"vcruntime140.dll", 7);
-	}
-
-	sei = {};
-	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
-	sei.fMask = 64;
-	sei.nShow = 5;
-	sei.lpParameters = L"run -l \"4game2.0\" -k \"l2 - eu\" -u \"https://eu-new.4game.com/lineage2\"";
-	sei.lpFile = b[8];
-	sei.lpVerb = L"runas";
-	ShellExecuteEx(&sei);
-	if (sei.hProcess != nullptr)
-	{
-		WaitForSingleObject(sei.hProcess, INFINITE);
-	}
-	exit(0);
-}
-
-void blackdesert(bool restore)
-{
-	ProcessTerminate(L"BlackDesert32.exe");
-	ProcessTerminate(L"BlackDesert64.exe");
-	ini(L"bdo");
-	for (int i = 0; i < 57; i++)
-	{
-		*b[i] = '\0';
-	}
-
-	if (x64())
-	{
-		AppendFile(0, L"bin64");
-		CombinePath(41, 0, L"D3DCompiler_42.dll");
-		CombinePath(42, 0, L"d3dx9_42.dll");
-		CombinePath(43, 0, L"d3dx11_42.dll");
-		CombinePath(44, 0, L"msvcp140.dll");
-		CombinePath(45, 0, L"ucrtbase.dll");
-		CombinePath(46, 0, L"vcruntime140.dll");
-		CombinePath(47, 0, L"d3dcompiler_43.dll");
-		CombinePath(48, 0, L"d3dcompiler_47.dll");
-		CombinePath(49, 0, L"concrt140.dll");
-		CombinePath(52, 0, L"vccorlib140.dll");
-		CombinePath(53, 0, L"mfc140u.dll");
-		CombinePath(54, 0, L"mfcm140u.dll");
-		CombinePath(55, 0, L"vcomp140.dll");
-		CombinePath(56, 0, L"vccorlib140.dll");
-		CombinePath(57, 0, L"d3dcompiler_46.dll");
-		if (restore)
-		{
-			URL(L"r/bdo/x64/msvcp140.dll", 44);
-			URL(L"r/bdo/x64/ucrtbase.dll", 45);
-			URL(L"r/bdo/x64/vcruntime140.dll", 46);
-			URL(L"r/bdo/x64/D3DCompiler_43.dll", 47);
-			URL(L"r/bdo/x64/concrt140.dll", 49);
-			URL(L"r/bdo/x64/mfc140u.dll", 53);
-			URL(L"r/bdo/x64/mfcm140u.dll", 54);
-			URL(L"r/bdo/x64/vcomp140.dll", 55);
-			URL(L"r/bdo/x64/vccorlib140.dll", 56);
-			bulk_apimswindll(L"r/bdo/x64/");
-		}
-		else
-		{
-			URL(L"6/msvcp140.dll", 44);
-			URL(L"6/ucrtbase.dll", 45);
-			URL(L"6/vcruntime140.dll", 46);
-			URL(L"6/D3DCompiler_47.dll", 47);
-			URL(L"6/concrt140.dll", 49);
-			URL(L"6/mfc140u.dll", 53);
-			URL(L"6/mfcm140u.dll", 54);
-			URL(L"6/vcomp140.dll", 55);
-			URL(L"6/vccorlib140.dll", 56);
-			bulk_apimswindll(L"6/");
-		}
-		if (restore)
-		{
-			URL(L"r/bdo/main/d3dcompiler_43.dll", 47);
-			URL(L"r/bdo/main/d3dcompiler_46.dll", 57);
-		}
-		else
-		{
-			URL(L"D3DCompiler_47.dll", 47);
-			URL(L"D3DCompiler_47.dll", 57);
-		}
-	}
-	else
-	{
-		for (int i = 0; i < 57; i++)
-		{
-			*b[i] = '\0';
-		}
-		AppendFile(0, L"bin");
-		CombinePath(41, 0, L"D3DCompiler_42.dll");
-		CombinePath(42, 0, L"d3dx9_42.dll");
-		CombinePath(43, 0, L"d3dx11_42.dll");
-		CombinePath(44, 0, L"msvcp140.dll");
-		CombinePath(45, 0, L"ucrtbase.dll");
-		CombinePath(46, 0, L"vcruntime140.dll");
-		CombinePath(47, 0, L"d3dcompiler_43.dll");
-		CombinePath(48, 0, L"d3dcompiler_47.dll");
-		CombinePath(49, 0, L"concrt140.dll");
-		CombinePath(52, 0, L"vccorlib140.dll");
-		CombinePath(53, 0, L"mfc140u.dll");
-		CombinePath(54, 0, L"mfcm140u.dll");
-		CombinePath(55, 0, L"vcomp140.dll");
-		CombinePath(56, 0, L"vccorlib140.dll");
-		CombinePath(57, 0, L"d3dcompiler_46.dll");
-		if (restore)
-		{
-			bulk_apimswindll(L"r/bdo/");
-			URL(L"r/bdo/msvcp140.dll", 44);
-			URL(L"r/bdo/ucrtbase.dll", 45);
-			URL(L"r/bdo/vcruntime140.dll", 46);
-			URL(L"r/bdo/D3DCompiler_43.dll", 47);
-			URL(L"r/bdo/concrt140.dll", 49);
-			URL(L"r/bdo/mfc140u.dll", 53);
-			URL(L"r/bdo/mfcm140u.dll", 54);
-			URL(L"r/bdo/vcomp140.dll", 55);
-			URL(L"r/bdo/vccorlib140.dll", 56);
-		}
-		else
-		{
-			bulk_apimswindll(L"");
-			URL(L"msvcp140.dll", 44);
-			URL(L"ucrtbase.dll", 45);
-			URL(L"vcruntime140.dll", 46);
-			URL(L"D3DCompiler_47.dll", 47);
-			URL(L"concrt140.dll", 49);
-			URL(L"mfc140u.dll", 53);
-			URL(L"mfcm140u.dll", 54);
-			URL(L"vcomp140.dll", 55);
-			URL(L"vccorlib140.dll", 56);
-		}
-
-	}
-
-	ini(L"bdo");
-	sei = {};
-	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
-	sei.fMask = 64;
-	sei.nShow = 5;
-	sei.lpFile = L"Black Desert Online Launcher.exe";
-	ShellExecuteEx(&sei);
-	if (sei.hProcess != nullptr)
-	{
-		WaitForSingleObject(sei.hProcess, INFINITE);
-	}
-
-	exit(0);
-}
-
-void elderscrolls_online(bool restore)
-{
-	for (int i = 0; i < 3; i++)
-	{
-		*b[i] = '\0';
-	}
-	ProcessTerminate(L"eso64.exe");
-	ini(L"eso");
-	CombinePath(1, 0, L"d3dcompiler_47.dll");
-	CombinePath(2, 0, L"eso64.exe");
-
-	if (restore)
-	{
-		URL(L"r/teso/d3dcompiler_47.dll", 1);
-	}
-	else
-	{
-		URL(L"6/D3DCompiler_47.dll", 1);
-	}
-
-	sei = {};
-	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
-	sei.fMask = 64;
-	sei.nShow = 5;
-	sei.lpFile = b[2];
-
-	ShellExecuteEx(&sei);
-	if (sei.hProcess != nullptr)
-	{
-		WaitForSingleObject(sei.hProcess, INFINITE);
-	}
-	exit(0);
-}
-
-void worldoftanks(bool restore)
-{
-	for (int i = 0; i < 46; i++)
-	{
-		*b[i] = '\0';
-	}
-	ini(L"wt");
-	wchar_t world_of_tanks[261] = L"WorldOfTanks.exe";
-	ProcessTerminate(L"WorldOfTanks.exe");
-
-	CombinePath(41, 0, L"concrt140.dll");
-	CombinePath(42, 0, L"msvcp140.dll");
-	CombinePath(43, 0, L"tbb.dll");
-	CombinePath(44, 0, L"vcruntime140.dll");
-	CombinePath(45, 0, L"system");
-	CombinePath(46, 45, L"ucrtbase.dll");
-	if (restore)
-	{
-		URL(L"r/wg/concrt140.dll", 41);
-		URL(L"r/wg/msvcp140.dll", 42);
-		URL(L"r/wg/tbb12.dll", 43);
-		URL(L"r/wg/vcruntime140.dll", 44);
-		URL(L"r/wg/ucrtbase.dll", 46);
-		AppendFile(0, L"system");
-		bulk_apimswindll(L"r/wg/");
-	}
-	else
-	{
-		URL(L"6/concrt140.dll", 41);
-		URL(L"6/msvcp140.dll", 42);
-		URL(L"6/tbb12.dll", 43);
-		URL(L"6/vcruntime140.dll", 44);
-		URL(L"6/ucrtbase.dll", 46);
-		AppendFile(0, L"system");
-		bulk_apimswindll(L"6/");
-	}
-	ini(L"wt");
-	sei = {};
-	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
-	sei.fMask = 64;
-	sei.nShow = 5;
-	sei.lpFile = JoinPath(0, world_of_tanks).c_str();
-	ShellExecuteEx(&sei);
-	if (sei.hProcess != nullptr)
-	{
-		WaitForSingleObject(sei.hProcess, INFINITE);
-	}
-	exit(0);
-}
-
-void worldofwarships(bool restore)
-{
-	for (int i = 0; i < 46; i++)
-	{
-		*b[i] = '\0';
-	}
-	ini(L"ww");
-	wchar_t world_of_warships[261] = L"WorldOfWarships.exe";
-	ProcessTerminate(L"WorldOfWarships.exe");
-	CombinePath(41, 0, L"msvcp140.dll");
-	CombinePath(42, 0, L"ucrtbase.dll");
-	CombinePath(43, 0, L"vcruntime140.dll");
-	CombinePath(44, 0, L"cef");
-	CombinePath(45, 44, L"d3dcompiler_43.dll");
-	CombinePath(46, 44, L"d3dcompiler_47.dll");
-	if (restore)
-	{
-		bulk_apimswindll(L"r/wg/");
-		URL(L"r/wg/msvcp140.dll", 41);
-		URL(L"r/wg/ucrtbase.dll", 42);
-		URL(L"r/wg/vcruntime140.dll", 43);
-		AppendFile(0, L"cef");
-		URL(L"r/wg/d3dcompiler_43.dll", 45);
-		URL(L"r/wg/d3dcompiler_47.dll", 46);
-	}
-	else
-	{
-		bulk_apimswindll(L"6/");
-		URL(L"msvcp140.dll", 41);
-		URL(L"ucrtbase.dll", 42);
-		URL(L"vcruntime140.dll", 43);
-		AppendFile(0, L"cef");
-		URL(L"D3DCompiler_47.dll", 45);
-		URL(L"D3DCompiler_47.dll", 46);
-	}
-	ini(L"ww");
-	sei = {};
-	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
-	sei.fMask = 64;
-	sei.nShow = 5;
-	sei.lpFile = JoinPath(0, world_of_warships).c_str();
-	ShellExecuteEx(&sei);
-	if (sei.hProcess != nullptr)
-	{
-		WaitForSingleObject(sei.hProcess, INFINITE);
-	}
-	exit(0);
-}
-
-void gameloop(bool restore)
-{
-	ProcessTerminate(L"AppMarket.exe");
-	ProcessTerminate(L"QQExternal.exe");
-	for (auto i = 0; i < 44; i++)
-	{
-		*b[i] = '\0';
-	}
-	ini(L"gl");
-	CombinePath(40, 0, L"msvcp140.dll");
-	CombinePath(41, 0, L"ucrtbase.dll");
-	CombinePath(42, 0, L"vcomp140.dll");
-	CombinePath(43, 0, L"vcruntime140.dll");
-	if (restore)
-	{
-		bulk_apimswindll(L"r/gameloop");
-		URL(L"r/gameloop/msvcp140.dll", 40);
-		URL(L"r/gameloop/ucrtbase.dll", 41);
-		URL(L"r/gameloop/vcomp140.dll", 42);
-		URL(L"r/gameloop/vcruntime140.dll", 43);
-	}
-	else
-	{
-		bulk_apimswindll(L"");
-		URL(L"msvcp140.dll", 40);
-		URL(L"ucrtbase.dll", 41);
-		URL(L"vcomp140.dll", 42);
-		URL(L"vcruntime140.dll", 43);
-	}
-	sei = {};
-	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
-	sei.fMask = 64;
-	sei.nShow = 5;
-	sei.lpFile = JoinPath(0, L"AppMarket.exe").c_str();
-	ShellExecuteEx(&sei);
-	if (sei.hProcess != nullptr)
-	{
-		WaitForSingleObject(sei.hProcess, INFINITE);
-	}
-	exit(0);
-}
-
 void lol(bool restore)
 {
 	ini(L"ll");
@@ -657,23 +260,6 @@ void lol(bool restore)
 
 	CombinePath(54, 0, L"Riot Client");
 	AppendFile(54, L"UX");
-	CombinePath(55, 54, L"d3dcompiler_47.dll");
-	if (restore)
-	{
-		URL(L"r/lol/d3dcompiler_47.dl", 55);
-	}
-	else
-	{
-		if (x64())
-		{
-			URL(L"6/D3DCompiler_47.dll", 55);
-		}
-		else
-		{
-			URL(L"D3DCompiler_47.dll", 55);
-		}
-
-	}
 
 	AppendFile(0, L"League of Legends");
 	CombinePath(42, 0, L"concrt140.dll");
@@ -706,19 +292,20 @@ void lol(bool restore)
 		URL(L"r/lol/d3dcompiler_47.dll", 52);
 		URL(L"r/lol/D3dx9_43.dll", 53);
 		URL(L"r/lol/xinput1_3.dll", 54);
+		URL(L"r/lol/tbb12.dll", 55);
 	}
 	else
 	{
 		bulk_apimswindll(L"");
-		URL(L"r/lol/concrt140.dll", 42);
-		URL(L"r/lol/d3dcompiler_47.dll", 43);
-		URL(L"r/lol/msvcp140.dll", 44);
-		URL(L"r/lol/msvcp140_1.dll", 45);
-		URL(L"r/lol/msvcp140_2.dll", 46);
-		URL(L"r/lol/msvcp140_codecvt_ids.dll", 47);
-		URL(L"r/lol/ucrtbase.dll", 48);
-		URL(L"r/lol/vcruntime140.dll", 49);
-		URL(L"r/lol/vcruntime140_1.dll", 50);
+		URL(L"concrt140.dll", 42);
+		URL(L"d3dcompiler_47.dll", 43);
+		URL(L"msvcp140.dll", 44);
+		URL(L"msvcp140_1.dll", 45);
+		URL(L"msvcp140_2.dll", 46);
+		URL(L"msvcp140_codecvt_ids.dll", 47);
+		URL(L"ucrtbase.dll", 48);
+		URL(L"vcruntime140.dll", 49);
+		URL(L"vcruntime140_1.dll", 50);
 		if (x64())
 		{
 			URL(L"6/D3DCompiler_47.dll", 43);
@@ -731,9 +318,9 @@ void lol(bool restore)
 			URL(L"D3DCompiler_47.dll", 52);
 			URL(L"tbb12.dll", 55);
 		}
-		URL(L"r/lol/D3DCompiler_47.dll", 52);
-		URL(L"r/lol/D3dx9_43.dll", 53);
-		URL(L"r/lol/xinput1_3.dll", 54);
+		URL(L"D3DCompiler_47.dll", 52);
+		URL(L"D3dx9_43.dll", 53);
+		URL(L"xinput1_3.dll", 54);
 	}
 
 	sei = {};
@@ -742,121 +329,6 @@ void lol(bool restore)
 	sei.nShow = 5;
 	sei.lpFile = JoinPath(0, L"LeagueClient.exe").c_str();
 	ShellExecuteExW(&sei);
-	exit(0);
-}
-
-void smite(bool restore)
-{
-	ProcessTerminate(L"Smite.exe");
-	ProcessTerminate(L"SmiteEAC.exe");
-	ProcessTerminate(L"ShippingPC-BattleGame.exe");
-	ini(L"sm");
-	CombinePath(6, 0, L"win32");
-	AppendFile(0, L"Win64");
-	CombinePath(1, 0, L"tbbmalloc.dll");
-	CombinePath(2, 0, L"concrt140.dll");
-	CombinePath(3, 0, L"vccorlib140.dll");
-	CombinePath(4, 0, L"vcruntime140.dll");
-	CombinePath(5, 0, L"d3dcompiler_46.dll");
-	if (restore)
-	{
-		URL(L"r/smite/x64/tbbmalloc.dll", 1);
-		URL(L"r/smite/x64/concrt140.dll", 2);
-		URL(L"r/smite/x64/vccorlib140.dll", 3);
-		URL(L"r/smite/x64/vcruntime140.dll", 4);
-		URL(L"r/smite/x64/d3dcompiler_46.dll", 5);
-	}
-	else
-	{
-		URL(L"6/tbbmalloc.dll", 1);
-		URL(L"6/concrt140.dll", 2);
-		URL(L"6/vccorlib140.dll", 3);
-		URL(L"6/vcruntime140.dll", 4);
-		URL(L"6/D3DCompiler_47.dll", 5);
-	}
-	for (auto i = 7; i < 12; i++)
-	{
-		*b[i] = '\0';
-	}
-	CombinePath(7, 6, L"tbbmalloc.dll");
-	CombinePath(8, 6, L"concrt140.dll");
-	CombinePath(9, 6, L"vccorlib140.dll");
-	CombinePath(10, 6, L"vcruntime140.dll");
-	CombinePath(11, 6, L"d3dcompiler_46.dll");
-	if (restore)
-	{
-		URL(L"r/smite/tbbmalloc.dll", 7);
-		URL(L"r/smite/concrt140.dll", 8);
-		URL(L"r/smite/vccorlib140.dll", 9);
-		URL(L"r/smite/vcruntime140.dll", 10);
-		URL(L"r/smite/d3dcompiler_46.dll", 11);
-	}
-	else
-	{
-		URL(L"tbbmalloc.dll", 7);
-		URL(L"concrt140.dll", 8);
-		URL(L"vccorlib140.dll", 9);
-		URL(L"vcruntime140.dll", 10);
-		URL(L"D3DCompiler_47.dll", 11);
-	}
-
-	sei = {};
-	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
-	sei.fMask = 64;
-	sei.nShow = 5;
-	sei.lpFile = L"steam://rungameid/386360";
-	ShellExecuteExW(&sei);
-	if (sei.hProcess != nullptr)
-	{
-		WaitForSingleObject(sei.hProcess, INFINITE);
-	}
-	exit(0);
-}
-
-void paladins(bool restore)
-{
-	ProcessTerminate(L"Paladins.exe");
-	ProcessTerminate(L"PaladinsEAC.exe");
-	ProcessTerminate(L"ShippingPC - ChaosGame.exe");
-
-	*b[0] = '\0';
-	*b[1] = '\0';
-	ini(L"pl");
-	AppendFile(0, L"Win64");
-	CombinePath(1, 0, L"tbbmalloc.dll");
-	if (restore)
-	{
-		URL(L"r/paladins/x64/tbbmalloc.dll", 1);
-	}
-	else
-	{
-		URL(L"6/tbbmalloc.dll", 1);
-	}
-	*b[0] = '\0';
-	*b[1] = '\0';
-	ini(L"pl");
-	AppendFile(0, L"Win32");
-	CombinePath(1, 0, L"tbbmalloc.dll");
-
-	if (restore)
-	{
-		URL(L"r/paladins/tbbmalloc.dll", 1);
-	}
-	else
-	{
-		URL(L"tbbmalloc.dll", 1);
-	}
-
-	sei = {};
-	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
-	sei.fMask = 64;
-	sei.nShow = 5;
-	sei.lpFile = L"steam://rungameid/444090";
-	ShellExecuteEx(&sei);
-	if (sei.hProcess != nullptr)
-	{
-		WaitForSingleObject(sei.hProcess, INFINITE);
-	}
 	exit(0);
 }
 
@@ -1046,7 +518,6 @@ void mesen()
 	}
 }
 
-
 void hbmame()
 {
 	if (x64())
@@ -1072,33 +543,6 @@ void hbmame()
 		}
 		std::filesystem::remove_all(b[1]);
 		std::filesystem::remove_all(b[0]);
-	}
-	exit(0);
-}
-
-void trackmania(bool restore)
-{
-	ini(L"track");
-	ProcessTerminate(L"Trackmania.exe");
-	CombinePath(1, 0, L"d3dcompiler_47.dll");
-	if (restore)
-	{
-		URL(L"r/track/d3dcompiler_47.dll", 1);
-	}
-	else
-	{
-		URL(L"D3DCompiler_47.dll", 1);
-	}
-
-	sei = {};
-	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
-	sei.fMask = 64;
-	sei.nShow = 5;
-	sei.lpFile = L"com.epicgames.launcher://apps/b04882669b2e495e9f747c8560488c93%3A7c1dfb2a7e444a8b8a7b3166219550f4%3APigeon?action=launch&silent=true";
-	ShellExecuteEx(&sei);
-	if (sei.hProcess != nullptr)
-	{
-		WaitForSingleObject(sei.hProcess, INFINITE);
 	}
 	exit(0);
 }
@@ -1202,54 +646,27 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				lol(false);
 				break;
 			case 1:
-				smite(false);
-				break;
-			case 2:
 				dota(false);
 				break;
-			case 3:
+			case 2:
 				minecraft();
 				break;
-			case 4:
-				blackdesert(false);
-				break;
-			case 5:
-				paladins(false);
-				break;
-			case 6:
-				worldoftanks(false);
-				break;
-			case 7:
-				worldofwarships(false);
-				break;
-			case 8:
-				lineage2(false);
-				break;
-			case 9:
-				elderscrolls_online(false);
-				break;
-			case 10:
-				gameloop(false);
-				break;
-			case 11:
-				trackmania(false);
-				break;
-			case 12:
+			case 3:
 				mesen();
 				break;
-			case 13:
+			case 4:
 				fbneo();
 				break;
-			case 14:
+			case 5:
 				hbmame();
 				break;
-			case 15:
+			case 6:
 				mame();
 				break;
-			case 16:
+			case 7:
 				winaio();
 				break;
-			case 17:
+			case 8:
 				DirectX9();
 				break;
 			default:;
@@ -1263,54 +680,27 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				lol(true);
 				break;
 			case 1:
-				smite(true);
-				break;
-			case 2:
 				dota(true);
 				break;
-			case 3:
+			case 2:
 				MessageBox(nullptr, L"Uninstall Java through Control Panel", L"LoLUpdater", MB_OK);
 				break;
-			case 4:
-				blackdesert(true);
-				break;
-			case 5:
-				paladins(true);
-				break;
-			case 6:
-				worldoftanks(true);
-				break;
-			case 7:
-				worldofwarships(true);
-				break;
-			case 8:
-				lineage2(true);
-				break;
-			case 9:
-				elderscrolls_online(true);
-				break;
-			case 10:
-				gameloop(true);
-				break;
-			case 11:
-				trackmania(true);
-				break;
-			case 12:
+			case 3:
 				mesen();
 				break;
-			case 13:
+			case 4:
 				fbneo();
 				break;
-			case 14:
+			case 5:
 				hbmame();
 				break;
-			case 15:
+			case 6:
 				mame();
 				break;
-			case 16:
+			case 7:
 				winaio();
 				break;
-			case 17:
+			case 8:
 				DirectX9();
 				break;
 			default:;
