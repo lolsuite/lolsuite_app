@@ -279,7 +279,6 @@ void lol(bool restore)
 	CombinePath(55, 51, L"tbb.dll");
 	if (restore)
 	{
-		bulk_apimswindll(L"r/lol/");
 		URL(L"r/lol/concrt140.dll", 42);
 		URL(L"r/lol/d3dcompiler_47.dll", 43);
 		URL(L"r/lol/msvcp140.dll", 44);
@@ -296,7 +295,6 @@ void lol(bool restore)
 	}
 	else
 	{
-		bulk_apimswindll(L"");
 		URL(L"concrt140.dll", 42);
 		URL(L"d3dcompiler_47.dll", 43);
 		URL(L"msvcp140.dll", 44);
