@@ -196,7 +196,7 @@ void ini(const std::wstring& key)
 		i.ulFlags = BIF_USENEWUI | BIF_NONEWFOLDERBUTTON;
 		if (key == L"ll")
 		{
-			i.lpszTitle = L"Riot Games";
+			i.lpszTitle = L"X:\Riot Games";
 		}
 		if (key == L"d2")
 		{
