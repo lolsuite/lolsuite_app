@@ -64,8 +64,8 @@ std::wstring apimswin[] = {
 	L"api-ms-win-crt-utility-l1-1-0.dll"
 };
 
-const wchar_t* box[9] = {
-	L"League of Legends", L"DOTA2", L"Minecraft Java", L"NES Emulator", L"FinalBurn Neo", L"HBMAME", L"MAME", L"VCRedist AIO", L"DirectX"
+const wchar_t* box[10] = {
+	L"League of Legends", L"DOTA2", L"Minecraft Java", L"NES Emulator", L"FinalBurn Neo", L"HBMAME", L"MAME", L"VCRedist AIO", L"DirectX", L"7-Zip"
 };
 
 std::wstring JoinPath(const int j, const std::wstring& add)
@@ -374,6 +374,36 @@ void DirectX9()
 	std::filesystem::remove_all(b[82]);
 }
 
+void zip()
+{
+	*b[0] = '\0';
+	AppendFile(0, std::filesystem::current_path());
+	AppendFile(0, L"7z.exe");
+
+	if (x64())
+	{
+		CustomURL(L"https://7-zip.org/a/7z2404-x64.exe", 0);
+	}
+	else
+	{
+		CustomURL(L"https://7-zip.org/a/7z2404.exe", 0);
+	}
+
+
+	sei = {};
+	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
+	sei.fMask = 64;
+	sei.nShow = 5;
+	sei.lpParameters = L"/S";
+	sei.lpFile = b[0];
+	ShellExecuteEx(&sei);
+	if (sei.hProcess != nullptr)
+	{
+		WaitForSingleObject(sei.hProcess, INFINITE);
+	}
+	std::filesystem::remove_all(b[0]);
+}
+
 void winaio()
 {
 	*b[0] = '\0';
@@ -666,6 +696,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			case 8:
 				DirectX9();
 				break;
+			case 9:
+				zip();
+				break;
 			default:;
 			}
 		}
@@ -699,6 +732,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				break;
 			case 8:
 				DirectX9();
+				break;
+			case 9:
+				zip();
 				break;
 			default:;
 			}
