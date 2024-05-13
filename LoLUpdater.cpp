@@ -478,19 +478,25 @@ void mame()
 	{
 		*b[82] = '\0';
 		AppendFile(82, std::filesystem::current_path());
-		AppendFile(82, L"MAME x64 (0.265).exe");
+		AppendFile(82, L"MAME256.exe");
 		CustomURL(L"https://github.com/mamedev/mame/releases/download/mame0265/mame0265b_64bit.exe", 82);
+		*b[1] = '\0';
+		AppendFile(1, std::filesystem::current_path());
+		AppendFile(1, L"7z.exe");
+		URL(L"7z.exe", 1);
 		sei = {};
 		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 		sei.fMask = 64;
 		sei.nShow = 5;
-		sei.lpFile = b[82];
+		sei.lpFile = b[1];
+		sei.lpParameters = L"x MAME256.exe -y";
 		ShellExecuteEx(&sei);
 		if (sei.hProcess != nullptr)
 		{
 			WaitForSingleObject(sei.hProcess, INFINITE);
 		}
-		std::filesystem::remove_all(b[0]);
+		std::filesystem::remove_all(b[1]);
+		std::filesystem::remove_all(b[82]);
 	}
 	exit(0);
 }
