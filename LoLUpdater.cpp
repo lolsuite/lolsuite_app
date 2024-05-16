@@ -200,7 +200,7 @@ void ini(const std::wstring& key)
 		}
 		if (key == L"d2")
 		{
-			i.lpszTitle = L"Program Files (x86)\\Steam\\steamapps\\common\\dota 2 beta\\game\\bin\\win64";
+			i.lpszTitle = L"X:\Program Files (x86)\\Steam\\steamapps\\common\\dota 2 beta\\game\\bin\\win64";
 		}
 		const auto dl = SHBrowseForFolder(&i);
 		if (dl == nullptr)
@@ -260,7 +260,6 @@ void lol(bool restore)
 
 	CombinePath(54, 0, L"Riot Client");
 	AppendFile(54, L"UX");
-
 	AppendFile(0, L"League of Legends");
 	CombinePath(42, 0, L"concrt140.dll");
 	CombinePath(43, 0, L"d3dcompiler_47.dll");
@@ -271,7 +270,6 @@ void lol(bool restore)
 	CombinePath(48, 0, L"ucrtbase.dll");
 	CombinePath(49, 0, L"vcruntime140.dll");
 	CombinePath(50, 0, L"vcruntime140_1.dll");
-
 	CombinePath(51, 0, L"Game");
 	CombinePath(52, 51, L"D3DCompiler_47.dll");
 	CombinePath(53, 51, L"D3dx9_43.dll");
@@ -304,6 +302,8 @@ void lol(bool restore)
 		URL(L"ucrtbase.dll", 48);
 		URL(L"vcruntime140.dll", 49);
 		URL(L"vcruntime140_1.dll", 50);
+		URL(L"D3dx9_43.dll", 53);
+		URL(L"xinput1_3.dll", 54);
 		if (x64())
 		{
 			URL(L"6/D3DCompiler_47.dll", 43);
@@ -316,8 +316,6 @@ void lol(bool restore)
 			URL(L"D3DCompiler_47.dll", 52);
 			URL(L"tbb12.dll", 55);
 		}
-		URL(L"D3dx9_43.dll", 53);
-		URL(L"xinput1_3.dll", 54);
 	}
 
 	sei = {};
