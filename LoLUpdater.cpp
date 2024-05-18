@@ -560,7 +560,7 @@ void hbmame()
 		URL(L"7z.exe", 0);
 		AppendFile(1, std::filesystem::current_path());
 		AppendFile(1, L"HBMAME.7z");
-		CustomURL(L"https://hbmame.1emulation.com/hbmameui18.7z", 1);
+		CustomURL(L"https://hbmame.1emulation.com/hbmameui19.7z", 1);
 		sei = {};
 		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 		sei.fMask = 64;
