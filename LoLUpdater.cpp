@@ -380,11 +380,11 @@ void zip()
 
 	if (x64())
 	{
-		CustomURL(L"https://7-zip.org/a/7z2404-x64.exe", 0);
+		CustomURL(L"https://www.7-zip.org/a/7z2405-x64.exe", 0);
 	}
 	else
 	{
-		CustomURL(L"https://7-zip.org/a/7z2404.exe", 0);
+		CustomURL(L"https://www.7-zip.org/a/7z2405.exe", 0);
 	}
 
 
