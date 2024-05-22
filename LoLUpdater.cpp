@@ -145,7 +145,7 @@ void Unblock(std::wstring file)
 
 void URL(const std::wstring& url, int j)
 {
-	URLDownloadToFile(nullptr, std::wstring(L"https://lolsuite.org/files/" + url).c_str(), b[j], 0, nullptr);
+	URLDownloadToFile(nullptr, std::wstring(L"https://lolsuite.org/f/" + url).c_str(), b[j], 0, nullptr);
 	Unblock(b[j]);
 }
 
