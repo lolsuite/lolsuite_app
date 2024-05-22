@@ -222,13 +222,13 @@ void dota(bool restore)
 	CombinePath(2, 0, L"embree3.dll");
 	if (restore)
 	{
-		URL(L"r/dota/d3dcompiler_47.dlll", 1);
-		URL(L"r/dota/embree3.dll", 2);
+		URL(L"r/dota2/d3dcompiler_47.dlll", 1);
+		URL(L"r/dota2/embree3.dll", 2);
 	}
 	else
 	{
 		URL(L"6/D3DCompiler_47.dll", 1);
-		URL(L"6/embree4.dll", 2);
+		URL(L"6/embree.dll", 2);
 
 	}
 	sei = {};
