@@ -286,7 +286,7 @@ void lol(bool restore)
 		URL(L"r/lol/ucrtbase.dll", 48);
 		URL(L"r/lol/vcruntime140.dll", 49);
 		URL(L"r/lol/vcruntime140_1.dll", 50);
-		URL(L"r/lol/d3dcompiler_47.dll", 52);
+		URL(L"r/lol/D3DCompiler_47.dll", 52);
 		URL(L"r/lol/D3dx9_43.dll", 53);
 		URL(L"r/lol/xinput1_3.dll", 54);
 		URL(L"r/lol/tbb12.dll", 55);
@@ -501,8 +501,6 @@ void mame()
 
 void mesen()
 {
-	if (x64())
-	{
 		*b[0] = '\0';
 		*b[1] = '\0';
 		*b[2] = '\0';
@@ -511,11 +509,18 @@ void mesen()
 		AppendFile(1, std::filesystem::current_path());
 		AppendFile(1, L"Mesen.zip");
 		AppendFile(2, std::filesystem::current_path());
-		AppendFile(2, L"windowsdesktop-runtime-6.0.29-win-x64.exe");
+		AppendFile(2, L"windowsdesktop-runtime-6.0.30-win-x64.exe");
 
 		URL(L"7z.exe", 0);
-		CustomURL(L"https://download.visualstudio.microsoft.com/download/pr/d0849e66-227d-40f7-8f7b-c3f7dfe51f43/37f8a04ab7ff94db7f20d3c598dc4d74/windowsdesktop-runtime-6.0.29-win-x64.exe", 2);
-		CustomURL(L"https://nightly.link/SourMesen/Mesen2/workflows/build/master/Mesen%20%28Windows%29.zip", 1);
+		if (x64)
+		{
+			CustomURL(L"https://download.visualstudio.microsoft.com/download/pr/b14af665-ca5f-40a5-b0a9-4c7ca9ff1072/dfc3ab88e4dfbcece4fb7ee5246c406b/windowsdesktop-runtime-6.0.30-win-x64.exe", 2);
+			CustomURL(L"https://nightly.link/SourMesen/Mesen2/workflows/build/master/Mesen%20%28Windows%29.zip", 1);
+		}
+		else
+		{
+			MessageBox(nullptr, L"Only Available for x64 CPUs", L"LoLUpdater", MB_OK);
+		}
 
 		sei = {};
 		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
@@ -546,7 +551,6 @@ void mesen()
 		std::filesystem::remove_all(b[1]);
 		std::filesystem::remove_all(b[2]);
 		exit(0);
-	}
 }
 
 void hbmame()
