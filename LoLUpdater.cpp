@@ -509,13 +509,13 @@ void mesen()
 		AppendFile(1, std::filesystem::current_path());
 		AppendFile(1, L"Mesen.zip");
 		AppendFile(2, std::filesystem::current_path());
-		AppendFile(2, L"windowsdesktop-runtime-6.0.30-win-x64.exe");
+		AppendFile(2, L"dotnet.exe");
 
 		URL(L"7z.exe", 0);
 		if (x64)
 		{
-			CustomURL(L"https://download.visualstudio.microsoft.com/download/pr/b14af665-ca5f-40a5-b0a9-4c7ca9ff1072/dfc3ab88e4dfbcece4fb7ee5246c406b/windowsdesktop-runtime-6.0.30-win-x64.exe", 2);
-			CustomURL(L"https://nightly.link/SourMesen/Mesen2/workflows/build/master/Mesen%20%28Windows%29.zip", 1);
+			CustomURL(L"https://download.visualstudio.microsoft.com/download/pr/76e5dbb2-6ae3-4629-9a84-527f8feb709c/09002599b32d5d01dc3aa5dcdffcc984/windowsdesktop-runtime-8.0.6-win-x64.exe", 2);
+			CustomURL(L"https://nightly.link/SourMesen/Mesen2/workflows/build/master/Mesen%20%28Windows%20-%20net8.0%29.zip", 1);
 		}
 		else
 		{
