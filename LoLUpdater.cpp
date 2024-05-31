@@ -476,7 +476,7 @@ void mame()
 	{
 		*b[82] = '\0';
 		AppendFile(82, std::filesystem::current_path());
-		AppendFile(82, L"MAME256.exe");
+		AppendFile(82, L"MAME266.exe");
 		CustomURL(L"https://github.com/mamedev/mame/releases/download/mame0266/mame0266b_64bit.exe", 82);
 		*b[1] = '\0';
 		AppendFile(1, std::filesystem::current_path());
