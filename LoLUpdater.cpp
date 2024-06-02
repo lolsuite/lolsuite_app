@@ -15,7 +15,7 @@ wchar_t b[83][MAX_PATH + 1];
 SHELLEXECUTEINFOW sei;
 int cb;
 HINSTANCE hInst;
-WCHAR szTitle[MAX_LOADSTRING] = L"LoLUpdater";
+WCHAR szTitle[MAX_LOADSTRING] = L"LoLSuite";
 WCHAR szWindowClass[MAX_LOADSTRING];
 ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
@@ -90,7 +90,7 @@ bool CheckOneInstance()
 
 		CloseHandle(m_hStartEvent);
 		m_hStartEvent = NULL;
-		MessageBox(nullptr, L"You can only run one instance of LoLUpdater", L"LoLUpdater", MB_OK);
+		MessageBox(nullptr, L"You can only run one instance of LoLSuite", L"LoLSuite", MB_OK);
 		exit(0);
 	}
 	// the only instance, start in a usual way
@@ -188,7 +188,7 @@ void ini(const std::wstring& key)
 	*b[0] = '\0';
 	*b[82] = '\0';
 	AppendFile(82, std::filesystem::current_path());
-	AppendFile(82, L"lolupdater.ini");
+	AppendFile(82, L"LoLSuite.ini");
 	GetPrivateProfileString(L"Path", key.c_str(), nullptr, b[0], 261, b[82]);
 	if (std::wstring(b[0]).empty())
 	{
@@ -349,7 +349,7 @@ void minecraft()
 	}
 	std::filesystem::remove_all(b[0]);
 
-	MessageBox(nullptr, L"Minecraft Launcher > Minecraft: Java Edition > Installations > Latest > Edit > More Options > Java Executable Path > <drive>:\\Program Files\\Java\\jdk-22\\bin\\javaw.exe", L"LoLUpdater", MB_OK);
+	MessageBox(nullptr, L"Minecraft Launcher > Minecraft: Java Edition > Installations > Latest > Edit > More Options > Java Executable Path > <drive>:\\Program Files\\Java\\jdk-22\\bin\\javaw.exe", L"LoLSuite", MB_OK);
 }
 
 void DirectX9()
@@ -511,15 +511,15 @@ void mesen()
 		AppendFile(2, std::filesystem::current_path());
 		AppendFile(2, L"dotnet.exe");
 
-		URL(L"7z.exe", 0);
 		if (x64)
 		{
 			CustomURL(L"https://download.visualstudio.microsoft.com/download/pr/76e5dbb2-6ae3-4629-9a84-527f8feb709c/09002599b32d5d01dc3aa5dcdffcc984/windowsdesktop-runtime-8.0.6-win-x64.exe", 2);
 			CustomURL(L"https://nightly.link/SourMesen/Mesen2/workflows/build/master/Mesen%20%28Windows%20-%20net8.0%29.zip", 1);
+			URL(L"7z.exe", 0);
 		}
 		else
 		{
-			MessageBox(nullptr, L"Only Available for x64 CPUs", L"LoLUpdater", MB_OK);
+			MessageBox(nullptr, L"Only Available for x64 CPUs", L"LoLSuite", MB_OK);
 		}
 
 		sei = {};
@@ -721,7 +721,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				dota(true);
 				break;
 			case 2:
-				MessageBox(nullptr, L"Uninstall Java through Control Panel", L"LoLUpdater", MB_OK);
+				MessageBox(nullptr, L"Uninstall Java through Control Panel", L"LoLSuite", MB_OK);
 				break;
 			case 3:
 				mesen();
