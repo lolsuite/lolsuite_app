@@ -65,7 +65,7 @@ std::wstring apimswin[] = {
 };
 
 const wchar_t* box[10] = {
-	L"League of Legends", L"DOTA2", L"Minecraft Java", L"NES Emulator", L"FinalBurn Neo", L"HBMAME", L"MAME", L"Visual Redistributable", L"DirectX", L"7-Zip"
+	L"League of Legends", L"DOTA2", L"Minecraft : Java", L"NES Emulator", L"FinalBurn Neo", L"HBMAME", L"MAME", L"Visual Redistributable", L"DirectX", L"7-Zip"
 };
 
 std::wstring JoinPath(const int j, const std::wstring& add)
@@ -97,7 +97,7 @@ bool CheckOneInstance()
 	return true;
 }
 
-void AppendFile(const int j, const std::wstring& add)
+void AppendPath(const int j, const std::wstring& add)
 {
 	std::filesystem::path p = b[j];
 	const std::filesystem::path f = p / add;
@@ -187,8 +187,8 @@ void ini(const std::wstring& key)
 {
 	*b[0] = '\0';
 	*b[82] = '\0';
-	AppendFile(82, std::filesystem::current_path());
-	AppendFile(82, L"LoLSuite.ini");
+	AppendPath(82, std::filesystem::current_path());
+	AppendPath(82, L"LoLSuite.ini");
 	GetPrivateProfileString(L"Path", key.c_str(), nullptr, b[0], 261, b[82]);
 	if (std::wstring(b[0]).empty())
 	{
@@ -259,8 +259,8 @@ void lol(bool restore)
 	ProcessTerminate(L"RiotClientUxRender.exe");
 
 	CombinePath(54, 0, L"Riot Client");
-	AppendFile(54, L"UX");
-	AppendFile(0, L"League of Legends");
+	AppendPath(54, L"UX");
+	AppendPath(0, L"League of Legends");
 	CombinePath(42, 0, L"concrt140.dll");
 	CombinePath(43, 0, L"d3dcompiler_47.dll");
 	CombinePath(44, 0, L"msvcp140.dll");
@@ -330,10 +330,10 @@ void lol(bool restore)
 void minecraft()
 {
 	*b[82] = '\0';
-	AppendFile(82, std::filesystem::current_path());
+	AppendPath(82, std::filesystem::current_path());
 	if (x64())
 	{
-		AppendFile(82, L"jdk-22_windows-x64_bin.exe");
+		AppendPath(82, L"jdk-22_windows-x64_bin.exe");
 		CustomURL(L"https://download.oracle.com/java/22/latest/jdk-22_windows-x64_bin.exe", 82);
 	}
 
@@ -355,8 +355,8 @@ void minecraft()
 void DirectX9()
 {
 	*b[82] = '\0';
-	AppendFile(82, std::filesystem::current_path());
-	AppendFile(82, L"dxwebsetup.exe");
+	AppendPath(82, std::filesystem::current_path());
+	AppendPath(82, L"dxwebsetup.exe");
 	CustomURL(L"https://download.microsoft.com/download/1/7/1/1718CCC4-6315-4D8E-9543-8E28A4E18C4C/dxwebsetup.exe", 82);
 	sei = {};
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
@@ -375,8 +375,8 @@ void DirectX9()
 void zip()
 {
 	*b[0] = '\0';
-	AppendFile(0, std::filesystem::current_path());
-	AppendFile(0, L"7z.exe");
+	AppendPath(0, std::filesystem::current_path());
+	AppendPath(0, L"7z.exe");
 
 	if (x64())
 	{
@@ -405,8 +405,8 @@ void zip()
 void winaio()
 {
 	*b[0] = '\0';
-	AppendFile(0, std::filesystem::current_path());
-	AppendFile(0, L"VisualCppRedist_AIO_x86_x64.exe");
+	AppendPath(0, std::filesystem::current_path());
+	AppendPath(0, L"VisualCppRedist_AIO_x86_x64.exe");
 	CustomURL(L"https://github.com/abbodi1406/vcredist/releases/download/v0.82.0/VisualCppRedist_AIO_x86_x64.exe", 0);
 	sei = {};
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
@@ -437,20 +437,20 @@ void fbneo()
 {
 	*b[0] = '\0';
 	*b[2] = '\0';
-	AppendFile(0, std::filesystem::current_path());
-	AppendFile(0, L"7z.exe");
+	AppendPath(0, std::filesystem::current_path());
+	AppendPath(0, L"7z.exe");
 	URL(L"7z.exe", 0);
 	if (x64())
 	{
-		AppendFile(2, std::filesystem::current_path());
-		AppendFile(2, L"FBNeo.zip");
+		AppendPath(2, std::filesystem::current_path());
+		AppendPath(2, L"FBNeo.zip");
 		std::filesystem::remove_all(b[2]);
 		CustomURL(L"https://github.com/finalburnneo/FBNeo/releases/download/latest/Windows.x64.zip", 2);
 	}
 	else
 	{
-		AppendFile(2, std::filesystem::current_path());
-		AppendFile(2, L"FBNeo.zip");
+		AppendPath(2, std::filesystem::current_path());
+		AppendPath(2, L"FBNeo.zip");
 		std::filesystem::remove_all(b[2]);
 		CustomURL(L"https://github.com/finalburnneo/FBNeo/releases/download/latest/Windows.x32.zip", 2);
 	}
@@ -475,12 +475,12 @@ void mame()
 	if (x64())
 	{
 		*b[82] = '\0';
-		AppendFile(82, std::filesystem::current_path());
-		AppendFile(82, L"MAME266.exe");
+		AppendPath(82, std::filesystem::current_path());
+		AppendPath(82, L"MAME266.exe");
 		CustomURL(L"https://github.com/mamedev/mame/releases/download/mame0266/mame0266b_64bit.exe", 82);
 		*b[1] = '\0';
-		AppendFile(1, std::filesystem::current_path());
-		AppendFile(1, L"7z.exe");
+		AppendPath(1, std::filesystem::current_path());
+		AppendPath(1, L"7z.exe");
 		URL(L"7z.exe", 1);
 		sei = {};
 		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
@@ -504,12 +504,12 @@ void mesen()
 		*b[0] = '\0';
 		*b[1] = '\0';
 		*b[2] = '\0';
-		AppendFile(0, std::filesystem::current_path());
-		AppendFile(0, L"7z.exe");
-		AppendFile(1, std::filesystem::current_path());
-		AppendFile(1, L"Mesen.zip");
-		AppendFile(2, std::filesystem::current_path());
-		AppendFile(2, L"dotnet.exe");
+		AppendPath(0, std::filesystem::current_path());
+		AppendPath(0, L"7z.exe");
+		AppendPath(1, std::filesystem::current_path());
+		AppendPath(1, L"Mesen.zip");
+		AppendPath(2, std::filesystem::current_path());
+		AppendPath(2, L"dotnet.exe");
 
 		if (x64)
 		{
@@ -559,11 +559,11 @@ void hbmame()
 	{
 		*b[0] = '\0';
 		*b[1] = '\0';
-		AppendFile(0, std::filesystem::current_path());
-		AppendFile(0, L"7z.exe");
+		AppendPath(0, std::filesystem::current_path());
+		AppendPath(0, L"7z.exe");
 		URL(L"7z.exe", 0);
-		AppendFile(1, std::filesystem::current_path());
-		AppendFile(1, L"HBMAME.7z");
+		AppendPath(1, std::filesystem::current_path());
+		AppendPath(1, L"HBMAME.7z");
 		CustomURL(L"https://hbmame.1emulation.com/hbmameui19.7z", 1);
 		sei = {};
 		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
@@ -719,30 +719,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				break;
 			case 1:
 				dota(true);
-				break;
-			case 2:
-				MessageBox(nullptr, L"Uninstall Java through Control Panel", L"LoLSuite", MB_OK);
-				break;
-			case 3:
-				mesen();
-				break;
-			case 4:
-				fbneo();
-				break;
-			case 5:
-				hbmame();
-				break;
-			case 6:
-				mame();
-				break;
-			case 7:
-				winaio();
-				break;
-			case 8:
-				DirectX9();
-				break;
-			case 9:
-				zip();
 				break;
 			default:;
 			}
