@@ -581,7 +581,7 @@ void hbmame()
 		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 		sei.fMask = 64;
 		sei.nShow = 5;
-		sei.lpFile = b[1];
+		sei.lpFile = b[0];
 		sei.lpParameters = L"x HBMAME.7z -y";
 		ShellExecuteEx(&sei);
 		if (sei.hProcess != nullptr)
