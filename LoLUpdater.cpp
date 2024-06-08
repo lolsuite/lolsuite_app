@@ -504,6 +504,7 @@ void mesen()
 		*b[0] = '\0';
 		*b[1] = '\0';
 		*b[2] = '\0';
+		*b[3] = '\0';
 		AppendPath(0, std::filesystem::current_path());
 		AppendPath(0, L"7z.exe");
 		AppendPath(1, std::filesystem::current_path());
@@ -546,6 +547,17 @@ void mesen()
 		{
 			WaitForSingleObject(sei.hProcess, INFINITE);
 		}
+		AppendPath(3, L"Mesen.exe");
+		sei = {};
+		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
+		sei.fMask = 64;
+		sei.nShow = 5;
+		sei.lpFile = b[3];
+		ShellExecuteEx(&sei);
+		if (sei.hProcess != nullptr)
+		{
+			WaitForSingleObject(sei.hProcess, INFINITE);
+		}
 
 		std::filesystem::remove_all(b[0]);
 		std::filesystem::remove_all(b[1]);
@@ -569,7 +581,7 @@ void hbmame()
 		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 		sei.fMask = 64;
 		sei.nShow = 5;
-		sei.lpFile = b[0];
+		sei.lpFile = b[1];
 		sei.lpParameters = L"x HBMAME.7z -y";
 		ShellExecuteEx(&sei);
 		if (sei.hProcess != nullptr)
