@@ -7,8 +7,6 @@
 #include <urlmon.h>
 #include "resource.h"
 #include <SDKDDKVer.h>
-#define WINVER 0x0A00
-#define _WIN32_WINNT 0x0A00
 #pragma comment (lib, "urlmon.lib")
 constexpr auto MAX_LOADSTRING = 100;
 wchar_t b[83][MAX_PATH + 1];
