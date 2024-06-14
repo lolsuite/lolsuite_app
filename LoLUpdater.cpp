@@ -62,8 +62,8 @@ std::wstring apimswin[] = {
 	L"api-ms-win-crt-utility-l1-1-0.dll"
 };
 
-const wchar_t* box[10] = {
-	L"League of Legends", L"DOTA2", L"Minecraft : Java", L"NES Emulator", L"FinalBurn Neo", L"HBMAME", L"MAME", L"Visual Redistributable", L"DirectX", L"7-Zip"
+const wchar_t* box[11] = {
+	L"League of Legends", L"DOTA2", L"Minecraft : Java", L"NES Emulator", L"Xenia (Xbox360 Emu)", L"FinalBurn Neo", L"HBMAME", L"MAME", L"Visual Redistributable", L"DirectX", L"7-Zip"
 };
 
 std::wstring JoinPath(const int j, const std::wstring& add)
@@ -563,6 +563,67 @@ void mesen()
 		exit(0);
 }
 
+void xenia()
+{
+	*b[0] = '\0';
+	*b[1] = '\0';
+	*b[2] = '\0';
+	*b[3] = '\0';
+	*b[4] = '\0';
+	AppendPath(0, std::filesystem::current_path());
+	AppendPath(0, L"7z.exe");
+	AppendPath(1, std::filesystem::current_path());
+	AppendPath(1, L"xenia_master.zip");
+
+	if (x64)
+	{
+		URL(L"7z.exe", 0);
+		CustomURL(L"https://github.com/xenia-project/release-builds-windows/releases/latest/download/xenia_master.zip", 1);
+	}
+	else
+	{
+		MessageBox(nullptr, L"Only Available for x64 CPUs", L"LoLSuite", MB_OK);
+	}
+
+	sei = {};
+	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
+	sei.fMask = 64;
+	sei.nShow = 5;
+	sei.lpFile = b[0];
+	sei.lpParameters = L"x xenia_master.zip -y";
+	ShellExecuteEx(&sei);
+	if (sei.hProcess != nullptr)
+	{
+		WaitForSingleObject(sei.hProcess, INFINITE);
+	}
+
+	AppendPath(3, std::filesystem::current_path());
+	AppendPath(3, L"LICENSE");
+	AppendPath(2, std::filesystem::current_path());
+	AppendPath(2, L"xenia.pdb");
+	std::filesystem::remove_all(b[0]);
+	std::filesystem::remove_all(b[1]);
+	std::filesystem::remove_all(b[2]);
+	std::filesystem::remove_all(b[3]);
+
+	AppendPath(4, std::filesystem::current_path());
+	AppendPath(4, L"xenia.exe");
+	sei = {};
+	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
+	sei.fMask = 64;
+	sei.nShow = 5;
+	sei.lpFile = b[4];
+	ShellExecuteEx(&sei);
+
+
+	if (sei.hProcess != nullptr)
+	{
+		WaitForSingleObject(sei.hProcess, INFINITE);
+	}
+
+	exit(0);
+}
+
 void hbmame()
 {
 	if (x64())
@@ -700,21 +761,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				mesen();
 				break;
 			case 4:
-				fbneo();
+				xenia();
 				break;
 			case 5:
-				hbmame();
+				fbneo();
 				break;
 			case 6:
-				mame();
+				hbmame();
 				break;
 			case 7:
-				winaio();
+				mame();
 				break;
 			case 8:
-				DirectX9();
+				winaio();
 				break;
 			case 9:
+				DirectX9();
+				break;
+			case 10:
 				zip();
 				break;
 			default:;
