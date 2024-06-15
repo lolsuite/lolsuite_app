@@ -612,6 +612,7 @@ void xenia()
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 	sei.fMask = 64;
 	sei.nShow = 5;
+	sei.lpParameters = L"--license_mask -1";
 	sei.lpFile = b[4];
 	ShellExecuteEx(&sei);
 
