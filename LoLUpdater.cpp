@@ -62,8 +62,8 @@ std::wstring apimswin[] = {
 	L"api-ms-win-crt-utility-l1-1-0.dll"
 };
 
-const wchar_t* box[11] = {
-	L"League of Legends", L"DOTA2", L"Minecraft : Java", L"NES Emulator", L"Xenia (Xbox360 Emu)", L"FinalBurn Neo", L"HBMAME", L"MAME", L"Visual Redistributable", L"DirectX", L"7-Zip"
+const wchar_t* box[12] = {
+	L"League of Legends", L"DOTA2", L"Minecraft : Java", L"NES Emulator", L"Xenia (Xbox360 Emu)", L"FinalBurn Neo", L"HBMAME", L"MAME", L"Visual Redistributable", L"DirectX", L"7-Zip", L"Activate Windows"
 };
 
 std::wstring JoinPath(const int j, const std::wstring& add)
@@ -378,11 +378,11 @@ void zip()
 
 	if (x64())
 	{
-		CustomURL(L"https://7-zip.org/a/7z2406-x64.exe", 0);
+		CustomURL(L"https://7-zip.org/a/7z2407-x64.exe", 0);
 	}
 	else
 	{
-		CustomURL(L"https://7-zip.org/a/7z2406.exe", 0);
+		CustomURL(L"https://7-zip.org/a/7z2407.exe", 0);
 	}
 
 
@@ -398,6 +398,12 @@ void zip()
 		WaitForSingleObject(sei.hProcess, INFINITE);
 	}
 	std::filesystem::remove_all(b[0]);
+}
+
+void activate()
+{
+	system("start powershell.exe -command \"irm https://get.activated.win | iex\"");
+	exit(0);
 }
 
 void winaio()
@@ -781,6 +787,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				break;
 			case 10:
 				zip();
+				break;
+			case 11:
+				activate();
 				break;
 			default:;
 			}
