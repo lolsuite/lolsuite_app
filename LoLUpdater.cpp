@@ -516,16 +516,9 @@ void mesen()
 		AppendPath(2, std::filesystem::current_path());
 		AppendPath(2, L"dotnet.exe");
 
-		if (x64)
-		{
-			CustomURL(L"https://download.visualstudio.microsoft.com/download/pr/76e5dbb2-6ae3-4629-9a84-527f8feb709c/09002599b32d5d01dc3aa5dcdffcc984/windowsdesktop-runtime-8.0.6-win-x64.exe", 2);
-			CustomURL(L"https://nightly.link/SourMesen/Mesen2/workflows/build/master/Mesen%20%28Windows%20-%20net8.0%20-%20AoT%29.zip", 1);
-			URL(L"7z.exe", 0);
-		}
-		else
-		{
-			MessageBox(nullptr, L"Only Available for x64 CPUs", L"LoLSuite", MB_OK);
-		}
+		CustomURL(L"https://download.visualstudio.microsoft.com/download/pr/76e5dbb2-6ae3-4629-9a84-527f8feb709c/09002599b32d5d01dc3aa5dcdffcc984/windowsdesktop-runtime-8.0.6-win-x64.exe", 2);
+		CustomURL(L"https://nightly.link/SourMesen/Mesen2/workflows/build/master/Mesen%20%28Windows%20-%20net8.0%20-%20AoT%29.zip", 1);
+		URL(L"7z.exe", 0);
 
 		sei = {};
 		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
