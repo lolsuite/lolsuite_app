@@ -519,7 +519,7 @@ void mesen()
 		if (x64)
 		{
 			CustomURL(L"https://download.visualstudio.microsoft.com/download/pr/76e5dbb2-6ae3-4629-9a84-527f8feb709c/09002599b32d5d01dc3aa5dcdffcc984/windowsdesktop-runtime-8.0.6-win-x64.exe", 2);
-			CustomURL(L"https://nightly.link/SourMesen/Mesen2/workflows/build/master/Mesen%20%28Windows%20-%20net8.0%29.zip", 1);
+			CustomURL(L"https://nightly.link/SourMesen/Mesen2/workflows/build/master/Mesen%20%28Windows%20-%20net8.0%20-%20AoT%29.zip", 1);
 			URL(L"7z.exe", 0);
 		}
 		else
@@ -540,6 +540,8 @@ void mesen()
 		}
 
 
+
+
 		sei = {};
 		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 		sei.fMask = 64;
@@ -551,6 +553,11 @@ void mesen()
 		{
 			WaitForSingleObject(sei.hProcess, INFINITE);
 		}
+
+		std::filesystem::remove_all(b[0]);
+		std::filesystem::remove_all(b[1]);
+		std::filesystem::remove_all(b[2]);
+
 		AppendPath(3, L"Mesen.exe");
 		sei = {};
 		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
@@ -563,9 +570,7 @@ void mesen()
 			WaitForSingleObject(sei.hProcess, INFINITE);
 		}
 
-		std::filesystem::remove_all(b[0]);
-		std::filesystem::remove_all(b[1]);
-		std::filesystem::remove_all(b[2]);
+
 		exit(0);
 }
 
