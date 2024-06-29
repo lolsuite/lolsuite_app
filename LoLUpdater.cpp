@@ -19,48 +19,6 @@ ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
-std::wstring apimswin[] = {
-	L"api-ms-win-core-console-l1-1-0.dll",
-	L"api-ms-win-core-datetime-l1-1-0.dll",
-	L"api-ms-win-core-debug-l1-1-0.dll",
-	L"api-ms-win-core-errorhandling-l1-1-0.dll",
-	L"api-ms-win-core-file-l1-1-0.dll",
-	L"api-ms-win-core-file-l1-2-0.dll",
-	L"api-ms-win-core-file-l2-1-0.dll",
-	L"api-ms-win-core-handle-l1-1-0.dll",
-	L"api-ms-win-core-heap-l1-1-0.dll",
-	L"api-ms-win-core-interlocked-l1-1-0.dll",
-	L"api-ms-win-core-libraryloader-l1-1-0.dll",
-	L"api-ms-win-core-localization-l1-2-0.dll",
-	L"api-ms-win-core-memory-l1-1-0.dll",
-	L"api-ms-win-core-namedpipe-l1-1-0.dll",
-	L"api-ms-win-core-processenvironment-l1-1-0.dll",
-	L"api-ms-win-core-processthreads-l1-1-0.dll",
-	L"api-ms-win-core-processthreads-l1-1-1.dll",
-	L"api-ms-win-core-profile-l1-1-0.dll",
-	L"api-ms-win-core-rtlsupport-l1-1-0.dll",
-	L"api-ms-win-core-string-l1-1-0.dll",
-	L"api-ms-win-core-synch-l1-1-0.dll",
-	L"api-ms-win-core-synch-l1-2-0.dll",
-	L"api-ms-win-core-sysinfo-l1-1-0.dll",
-	L"api-ms-win-core-timezone-l1-1-0.dll",
-	L"api-ms-win-core-util-l1-1-0.dll",
-	L"api-ms-win-crt-conio-l1-1-0.dll",
-	L"api-ms-win-crt-convert-l1-1-0.dll",
-	L"api-ms-win-crt-environment-l1-1-0.dll",
-	L"api-ms-win-crt-filesystem-l1-1-0.dll",
-	L"api-ms-win-crt-heap-l1-1-0.dll",
-	L"api-ms-win-crt-locale-l1-1-0.dll",
-	L"api-ms-win-crt-math-l1-1-0.dll",
-	L"api-ms-win-crt-multibyte-l1-1-0.dll",
-	L"api-ms-win-crt-private-l1-1-0.dll",
-	L"api-ms-win-crt-process-l1-1-0.dll",
-	L"api-ms-win-crt-runtime-l1-1-0.dll",
-	L"api-ms-win-crt-stdio-l1-1-0.dll",
-	L"api-ms-win-crt-string-l1-1-0.dll",
-	L"api-ms-win-crt-time-l1-1-0.dll",
-	L"api-ms-win-crt-utility-l1-1-0.dll"
-};
 
 const wchar_t* box[11] = {
 	L"League of Legends", L"Minecraft : Java", L"NES Emulator", L"Xenia (Xbox360 Emu)", L"FinalBurn Neo", L"HBMAME", L"MAME", L"Visual Redistributable", L"DirectX", L"7-Zip", L"Activate Windows"
@@ -153,14 +111,6 @@ void CustomURL(const std::wstring& url, int j)
 	Unblock(b[j]);
 }
 
-void bulk_apimswindll(const wchar_t* url)
-{
-	for (int i = 0; i < 40; i++)
-	{
-		CombinePath(i + 1, 0, apimswin[i]);
-		URL(std::wstring(url + std::wstring(apimswin[i])), i + 1);
-	}
-}
 
 bool x64()
 {
@@ -181,51 +131,37 @@ bool x64()
 	return bIsWow64 != FALSE;
 }
 
-void ini(const std::wstring& key)
+
+void lol(bool restore)
 {
 	*b[0] = '\0';
 	*b[82] = '\0';
 	AppendPath(82, std::filesystem::current_path());
 	AppendPath(82, L"LoLSuite.ini");
-	GetPrivateProfileString(L"Path", key.c_str(), nullptr, b[0], 261, b[82]);
+	GetPrivateProfileString(L"Path", L"League of Legends", nullptr, b[0], 261, b[82]);
 	if (std::wstring(b[0]).empty())
 	{
 		BROWSEINFO i{};
 		i.ulFlags = BIF_USENEWUI | BIF_NONEWFOLDERBUTTON;
-		if (key == L"ll")
-		{
-			i.lpszTitle = L"X:\Riot Games";
-		}
-		if (key == L"d2")
-		{
-			i.lpszTitle = L"X:\Program Files (x86)\\Steam\\steamapps\\common\\dota 2 beta\\game\\bin\\win64";
-		}
+		i.lpszTitle = L"<drive>:\Riot Games";
 		const auto dl = SHBrowseForFolder(&i);
 		if (dl == nullptr)
 		{
 			exit(0);
 		}
 		SHGetPathFromIDList(dl, b[0]);
-		WritePrivateProfileString(L"Path", key.c_str(), b[0], b[82]);
+		WritePrivateProfileString(L"Path", L"League of Legends", b[0], b[82]);
 	}
-}
-
-void lol(bool restore)
-{
-	ini(L"ll");
 	ProcessTerminate(L"LeagueClient.exe");
 	ProcessTerminate(L"LeagueClientUx.exe");
 	ProcessTerminate(L"LeagueClientUxRender.exe");
-	ProcessTerminate(L"LeagueCrashHandler64.exe");
 	ProcessTerminate(L"League of Legends.exe");
 	ProcessTerminate(L"Riot Client.exe");
 	ProcessTerminate(L"RiotClientServices.exe");
-	ProcessTerminate(L"RiotClientCrashHandler.exe");
-	ProcessTerminate(L"RiotClientUx.exe");
-	ProcessTerminate(L"RiotClientUxRender.exe");
 
 	CombinePath(54, 0, L"Riot Client");
-	AppendPath(54, L"UX");
+
+
 	AppendPath(0, L"League of Legends");
 	CombinePath(42, 0, L"concrt140.dll");
 	CombinePath(43, 0, L"d3dcompiler_47.dll");
@@ -283,12 +219,13 @@ void lol(bool restore)
 			URL(L"tbb12.dll", 55);
 		}
 	}
-
+	GetPrivateProfileString(L"Path", L"League of Legends", nullptr, b[0], 261, b[82]);
+	CombinePath(54, 0, L"Riot Client");
 	sei = {};
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 	sei.fMask = 64;
 	sei.nShow = 5;
-	sei.lpFile = JoinPath(0, L"LeagueClient.exe").c_str();
+	sei.lpFile = JoinPath(54, L"RiotClientServices.exe").c_str();
 	ShellExecuteExW(&sei);
 	exit(0);
 }
