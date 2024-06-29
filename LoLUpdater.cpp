@@ -62,8 +62,8 @@ std::wstring apimswin[] = {
 	L"api-ms-win-crt-utility-l1-1-0.dll"
 };
 
-const wchar_t* box[12] = {
-	L"League of Legends", L"DOTA2", L"Minecraft : Java", L"NES Emulator", L"Xenia (Xbox360 Emu)", L"FinalBurn Neo", L"HBMAME", L"MAME", L"Visual Redistributable", L"DirectX", L"7-Zip", L"Activate Windows"
+const wchar_t* box[11] = {
+	L"League of Legends", L"Minecraft : Java", L"NES Emulator", L"Xenia (Xbox360 Emu)", L"FinalBurn Neo", L"HBMAME", L"MAME", L"Visual Redistributable", L"DirectX", L"7-Zip", L"Activate Windows"
 };
 
 std::wstring JoinPath(const int j, const std::wstring& add)
@@ -208,38 +208,6 @@ void ini(const std::wstring& key)
 		SHGetPathFromIDList(dl, b[0]);
 		WritePrivateProfileString(L"Path", key.c_str(), b[0], b[82]);
 	}
-}
-
-void dota(bool restore)
-{
-	ProcessTerminate(L"dota2.exe");
-	*b[1] = '\0';
-	*b[2] = '\0';
-	ini(L"d2");
-	CombinePath(1, 0, L"D3DCompiler_47.dll");
-	CombinePath(2, 0, L"embree3.dll");
-	if (restore)
-	{
-		URL(L"r/dota2/d3dcompiler_47.dlll", 1);
-		URL(L"r/dota2/embree3.dll", 2);
-	}
-	else
-	{
-		URL(L"6/D3DCompiler_47.dll", 1);
-		URL(L"6/embree.dll", 2);
-
-	}
-	sei = {};
-	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
-	sei.fMask = 64;
-	sei.nShow = 5;
-	sei.lpFile = L"steam://rungameid/570";
-	ShellExecuteEx(&sei);
-	if (sei.hProcess != nullptr)
-	{
-		WaitForSingleObject(sei.hProcess, INFINITE);
-	}
-	exit(0);
 }
 
 void lol(bool restore)
@@ -579,15 +547,8 @@ void xenia()
 	AppendPath(1, std::filesystem::current_path());
 	AppendPath(1, L"xenia_master.zip");
 
-	if (x64)
-	{
-		URL(L"7z.exe", 0);
-		CustomURL(L"https://github.com/xenia-project/release-builds-windows/releases/latest/download/xenia_master.zip", 1);
-	}
-	else
-	{
-		MessageBox(nullptr, L"Only Available for x64 CPUs", L"LoLSuite", MB_OK);
-	}
+	URL(L"7z.exe", 0);
+	CustomURL(L"https://github.com/xenia-project/release-builds-windows/releases/latest/download/xenia_master.zip", 1);
 
 	sei = {};
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
@@ -757,36 +718,33 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				lol(false);
 				break;
 			case 1:
-				dota(false);
-				break;
-			case 2:
 				minecraft();
 				break;
-			case 3:
+			case 2:
 				mesen();
 				break;
-			case 4:
+			case 3:
 				xenia();
 				break;
-			case 5:
+			case 4:
 				fbneo();
 				break;
-			case 6:
+			case 5:
 				hbmame();
 				break;
-			case 7:
+			case 6:
 				mame();
 				break;
-			case 8:
+			case 7:
 				winaio();
 				break;
-			case 9:
+			case 8:
 				DirectX9();
 				break;
-			case 10:
+			case 9:
 				zip();
 				break;
-			case 11:
+			case 10:
 				activate();
 				break;
 			default:;
@@ -798,9 +756,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
 			case 0:
 				lol(true);
-				break;
-			case 1:
-				dota(true);
 				break;
 			default:;
 			}
