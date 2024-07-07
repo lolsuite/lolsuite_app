@@ -384,8 +384,8 @@ void mame()
 	{
 		*b[82] = '\0';
 		AppendPath(82, std::filesystem::current_path());
-		AppendPath(82, L"MAME266.exe");
-		CustomURL(L"https://github.com/mamedev/mame/releases/download/mame0266/mame0266b_64bit.exe", 82);
+		AppendPath(82, L"MAME.exe");
+		CustomURL(L"https://github.com/mamedev/mame/releases/download/mame0267/mame0267b_64bit.exe", 82);
 		*b[1] = '\0';
 		AppendPath(1, std::filesystem::current_path());
 		AppendPath(1, L"7z.exe");
@@ -395,7 +395,7 @@ void mame()
 		sei.fMask = 64;
 		sei.nShow = 5;
 		sei.lpFile = b[1];
-		sei.lpParameters = L"x MAME256.exe -y";
+		sei.lpParameters = L"x MAME.exe -y";
 		ShellExecuteEx(&sei);
 		if (sei.hProcess != nullptr)
 		{
