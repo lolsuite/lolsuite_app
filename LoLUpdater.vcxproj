@@ -73,7 +73,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <MinimumRequiredVersion>5.01</MinimumRequiredVersion>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>urlmon.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AllowIsolation>false</AllowIsolation>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>

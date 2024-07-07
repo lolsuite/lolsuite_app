@@ -7,7 +7,6 @@
 #include <urlmon.h>
 #include "resource.h"
 #include <SDKDDKVer.h>
-#pragma comment (lib, "urlmon.lib")
 constexpr auto MAX_LOADSTRING = 100;
 wchar_t b[83][MAX_PATH + 1];
 SHELLEXECUTEINFOW sei;
