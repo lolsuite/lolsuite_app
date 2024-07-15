@@ -17,10 +17,11 @@ WCHAR szWindowClass[MAX_LOADSTRING];
 ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+typedef BOOL(WINAPI* LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
+LPFN_ISWOW64PROCESS fnIsWow64Process;
 
-
-const wchar_t* box[11] = {
-	L"League of Legends", L"Minecraft : Java", L"NES Emulator", L"Xenia (Xbox360 Emu)", L"FinalBurn Neo", L"HBMAME", L"MAME", L"Visual Redistributable", L"DirectX", L"7-Zip", L"Activate Windows"
+const wchar_t* box[12] = {
+	L"League of Legends", L"Minecraft", L"NES Emulator", L"Xenia (Xbox360 Emu)", L"FinalBurn Neo", L"HBMAME", L"MAME", L"Visual Redistributable", L"DirectX9", L"7-Zip", L"Activate WinOS", L"Retro ROMs"
 };
 
 std::wstring JoinPath(const int j, const std::wstring& add)
@@ -29,12 +30,12 @@ std::wstring JoinPath(const int j, const std::wstring& add)
 	return (p / add).c_str();
 }
 
-bool CheckOneInstance()
+bool SingleInstance()
 {
 
-	HANDLE  m_hStartEvent = CreateEventW(NULL, FALSE, FALSE, L"Global\\CSAPP");
+	HANDLE  m_hStartEvent = CreateEvent(nullptr, FALSE, FALSE, L"Global\\CSAPP");
 
-	if (m_hStartEvent == NULL)
+	if (m_hStartEvent == nullptr)
 	{
 		CloseHandle(m_hStartEvent);
 		return false;
@@ -44,8 +45,8 @@ bool CheckOneInstance()
 	if (GetLastError() == ERROR_ALREADY_EXISTS) {
 
 		CloseHandle(m_hStartEvent);
-		m_hStartEvent = NULL;
-		MessageBox(nullptr, L"You can only run one instance of LoLSuite", L"LoLSuite", MB_OK);
+		m_hStartEvent = nullptr;
+		MessageBox(nullptr, L"Only one instance is allowed", L"LoLSuite", MB_OK);
 		exit(0);
 	}
 	// the only instance, start in a usual way
@@ -71,7 +72,7 @@ void CopyFile(const int i, const int k, const std::wstring& add)
 	copy_file(b[i], JoinPath(k, add), std::filesystem::copy_options::overwrite_existing);
 }
 
-void ProcessTerminate(const std::wstring& process_name)
+void TerminateProcess(const std::wstring& process_name)
 {
 	HANDLE snap = CreateToolhelp32Snapshot(2, 0);
 	PROCESSENTRY32 dwProcessId;
@@ -93,42 +94,45 @@ void ProcessTerminate(const std::wstring& process_name)
 	CloseHandle(snap);
 }
 
-void Unblock(std::wstring file)
+void UnblockFile(std::wstring file)
 {
 	DeleteFile(file.append(L":Zone.Identifier").c_str());
 }
 
-void URL(const std::wstring& url, int j)
+void local_download(const std::wstring& url, int j)
 {
 	URLDownloadToFile(nullptr, std::wstring(L"https://lolsuite.org/f/" + url).c_str(), b[j], 0, nullptr);
-	Unblock(b[j]);
+	UnblockFile(b[j]);
 }
 
-void CustomURL(const std::wstring& url, int j)
+void download(const std::wstring& url, int j)
 {
 	URLDownloadToFile(nullptr, url.c_str(), b[j], 0, nullptr);
-	Unblock(b[j]);
+	UnblockFile(b[j]);
 }
 
 
-bool x64()
+BOOL detect_x64()
 {
 	BOOL bIsWow64 = FALSE;
 
-	typedef BOOL(APIENTRY* LPFN_ISWOW64PROCESS)
-		(HANDLE, PBOOL);
+	//IsWow64Process is not available on all supported versions of Windows.
+	//Use GetModuleHandle to get a handle to the DLL that contains the function
+	//and GetProcAddress to get a pointer to the function if available.
 
-	HMODULE module = GetModuleHandle(L"kernel32");
-	const char funcName[] = "IsWow64Process";
-	LPFN_ISWOW64PROCESS fnIsWow64Process = reinterpret_cast<LPFN_ISWOW64PROCESS>(GetProcAddress(module, funcName));
+	fnIsWow64Process = (LPFN_ISWOW64PROCESS)GetProcAddress(
+		GetModuleHandle(TEXT("kernel32")), "IsWow64Process");
 
-	if (nullptr != fnIsWow64Process)
+	if (NULL != fnIsWow64Process)
 	{
 		if (!fnIsWow64Process(GetCurrentProcess(), &bIsWow64))
-			throw std::exception("Unknown error");
+		{
+			//handle error
+		}
 	}
-	return bIsWow64 != FALSE;
+	return bIsWow64;
 }
+
 
 
 void lol(bool restore)
@@ -151,12 +155,12 @@ void lol(bool restore)
 		SHGetPathFromIDList(dl, b[0]);
 		WritePrivateProfileString(L"Path", L"League of Legends", b[0], b[82]);
 	}
-	ProcessTerminate(L"LeagueClient.exe");
-	ProcessTerminate(L"LeagueClientUx.exe");
-	ProcessTerminate(L"LeagueClientUxRender.exe");
-	ProcessTerminate(L"League of Legends.exe");
-	ProcessTerminate(L"Riot Client.exe");
-	ProcessTerminate(L"RiotClientServices.exe");
+	TerminateProcess(L"LeagueClient.exe");
+	TerminateProcess(L"LeagueClientUx.exe");
+	TerminateProcess(L"LeagueClientUxRender.exe");
+	TerminateProcess(L"League of Legends.exe");
+	TerminateProcess(L"Riot Client.exe");
+	TerminateProcess(L"RiotClientServices.exe");
 
 	CombinePath(54, 0, L"Riot Client");
 
@@ -178,44 +182,45 @@ void lol(bool restore)
 	CombinePath(55, 51, L"tbb.dll");
 	if (restore)
 	{
-		URL(L"r/lol/concrt140.dll", 42);
-		URL(L"r/lol/d3dcompiler_47.dll", 43);
-		URL(L"r/lol/msvcp140.dll", 44);
-		URL(L"r/lol/msvcp140_1.dll", 45);
-		URL(L"r/lol/msvcp140_2.dll", 46);
-		URL(L"r/lol/msvcp140_codecvt_ids.dll", 47);
-		URL(L"r/lol/ucrtbase.dll", 48);
-		URL(L"r/lol/vcruntime140.dll", 49);
-		URL(L"r/lol/vcruntime140_1.dll", 50);
-		URL(L"r/lol/D3DCompiler_47.dll", 52);
-		URL(L"r/lol/D3dx9_43.dll", 53);
-		URL(L"r/lol/xinput1_3.dll", 54);
-		URL(L"r/lol/tbb12.dll", 55);
+		local_download(L"r/lol/concrt140.dll", 42);
+		local_download(L"r/lol/d3dcompiler_47.dll", 43);
+		local_download(L"r/lol/msvcp140.dll", 44);
+		local_download(L"r/lol/msvcp140_1.dll", 45);
+		local_download(L"r/lol/msvcp140_2.dll", 46);
+		local_download(L"r/lol/msvcp140_codecvt_ids.dll", 47);
+		local_download(L"r/lol/ucrtbase.dll", 48);
+		local_download(L"r/lol/vcruntime140.dll", 49);
+		local_download(L"r/lol/vcruntime140_1.dll", 50);
+		local_download(L"r/lol/D3DCompiler_47.dll", 52);
+		local_download(L"r/lol/D3dx9_43.dll", 53);
+		local_download(L"r/lol/xinput1_3.dll", 54);
+		local_download(L"r/lol/tbb12.dll", 55);
 	}
 	else
 	{
-		URL(L"concrt140.dll", 42);
-		URL(L"d3dcompiler_47.dll", 43);
-		URL(L"msvcp140.dll", 44);
-		URL(L"msvcp140_1.dll", 45);
-		URL(L"msvcp140_2.dll", 46);
-		URL(L"msvcp140_codecvt_ids.dll", 47);
-		URL(L"ucrtbase.dll", 48);
-		URL(L"vcruntime140.dll", 49);
-		URL(L"vcruntime140_1.dll", 50);
-		URL(L"D3dx9_43.dll", 53);
-		URL(L"xinput1_3.dll", 54);
-		if (x64())
+		local_download(L"concrt140.dll", 42);
+		local_download(L"d3dcompiler_47.dll", 43);
+		local_download(L"msvcp140.dll", 44);
+		local_download(L"msvcp140_1.dll", 45);
+		local_download(L"msvcp140_2.dll", 46);
+		local_download(L"msvcp140_codecvt_ids.dll", 47);
+		local_download(L"ucrtbase.dll", 48);
+		local_download(L"vcruntime140.dll", 49);
+		local_download(L"vcruntime140_1.dll", 50);
+		local_download(L"D3dx9_43.dll", 53);
+		local_download(L"xinput1_3.dll", 54);
+		if (detect_x64())
 		{
-			URL(L"6/D3DCompiler_47.dll", 43);
-			URL(L"6/D3DCompiler_47.dll", 52);
-			URL(L"6/tbb12.dll", 55);
+			local_download(L"6/D3DCompiler_47.dll", 43);
+
+			local_download(L"6/D3DCompiler_47.dll", 52);
+			local_download(L"6/tbb12.dll", 55);
 		}
 		else
 		{
-			URL(L"D3DCompiler_47.dll", 43);
-			URL(L"D3DCompiler_47.dll", 52);
-			URL(L"tbb12.dll", 55);
+			local_download(L"D3DCompiler_47.dll", 43);
+			local_download(L"D3DCompiler_47.dll", 52);
+			local_download(L"tbb12.dll", 55);
 		}
 	}
 	GetPrivateProfileString(L"Path", L"League of Legends", nullptr, b[0], 261, b[82]);
@@ -233,10 +238,10 @@ void minecraft()
 {
 	*b[82] = '\0';
 	AppendPath(82, std::filesystem::current_path());
-	if (x64())
+	if (detect_x64())
 	{
 		AppendPath(82, L"jdk-22_windows-x64_bin.exe");
-		CustomURL(L"https://download.oracle.com/java/22/latest/jdk-22_windows-x64_bin.exe", 82);
+		download(L"https://download.oracle.com/java/22/latest/jdk-22_windows-x64_bin.exe", 82);
 	}
 
 	sei = {};
@@ -259,7 +264,7 @@ void DirectX9()
 	*b[82] = '\0';
 	AppendPath(82, std::filesystem::current_path());
 	AppendPath(82, L"dxwebsetup.exe");
-	CustomURL(L"https://download.microsoft.com/download/1/7/1/1718CCC4-6315-4D8E-9543-8E28A4E18C4C/dxwebsetup.exe", 82);
+	download(L"https://download.microsoft.com/download/1/7/1/1718CCC4-6315-4D8E-9543-8E28A4E18C4C/dxwebsetup.exe", 82);
 	sei = {};
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 	sei.fMask = 64;
@@ -280,13 +285,13 @@ void zip()
 	AppendPath(0, std::filesystem::current_path());
 	AppendPath(0, L"7z.exe");
 
-	if (x64())
+	if (detect_x64())
 	{
-		CustomURL(L"https://7-zip.org/a/7z2407-x64.exe", 0);
+		download(L"https://7-zip.org/a/7z2407-x64.exe", 0);
 	}
 	else
 	{
-		CustomURL(L"https://7-zip.org/a/7z2407.exe", 0);
+		download(L"https://7-zip.org/a/7z2407.exe", 0);
 	}
 
 
@@ -315,7 +320,7 @@ void winaio()
 	*b[0] = '\0';
 	AppendPath(0, std::filesystem::current_path());
 	AppendPath(0, L"VisualCppRedist_AIO_x86_x64.exe");
-	CustomURL(L"https://github.com/abbodi1406/vcredist/releases/download/v0.82.0/VisualCppRedist_AIO_x86_x64.exe", 0);
+	download(L"https://github.com/abbodi1406/vcredist/releases/download/v0.82.0/VisualCppRedist_AIO_x86_x64.exe", 0);
 	sei = {};
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 	sei.fMask = 64;
@@ -345,22 +350,24 @@ void fbneo()
 {
 	*b[0] = '\0';
 	*b[2] = '\0';
+	*b[1] = '\0';
+	*b[3] = '\0';
 	AppendPath(0, std::filesystem::current_path());
 	AppendPath(0, L"7z.exe");
-	URL(L"7z.exe", 0);
-	if (x64())
+	local_download(L"7z.exe", 0);
+	if (detect_x64())
 	{
 		AppendPath(2, std::filesystem::current_path());
 		AppendPath(2, L"FBNeo.zip");
 		std::filesystem::remove_all(b[2]);
-		CustomURL(L"https://github.com/finalburnneo/FBNeo/releases/download/latest/Windows.x64.zip", 2);
+		download(L"https://github.com/finalburnneo/FBNeo/releases/download/latest/Windows.x64.zip", 2);
 	}
 	else
 	{
 		AppendPath(2, std::filesystem::current_path());
 		AppendPath(2, L"FBNeo.zip");
 		std::filesystem::remove_all(b[2]);
-		CustomURL(L"https://github.com/finalburnneo/FBNeo/releases/download/latest/Windows.x32.zip", 2);
+		download(L"https://github.com/finalburnneo/FBNeo/releases/download/latest/Windows.x32.zip", 2);
 	}
 	sei = {};
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
@@ -373,6 +380,37 @@ void fbneo()
 	{
 		WaitForSingleObject(sei.hProcess, INFINITE);
 	}
+	if (detect_x64)
+	{
+		AppendPath(1, std::filesystem::current_path());
+		AppendPath(1, L"fbneo64.exe");
+		sei = {};
+		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
+		sei.fMask = 64;
+		sei.nShow = 5;
+		sei.lpFile = b[1];
+		ShellExecuteEx(&sei);
+		if (sei.hProcess != nullptr)
+		{
+			WaitForSingleObject(sei.hProcess, INFINITE);
+		}
+	}
+	else
+	{
+		AppendPath(1, std::filesystem::current_path());
+		AppendPath(1, L"fbneo.exe");
+		sei = {};
+		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
+		sei.fMask = 64;
+		sei.nShow = 5;
+		sei.lpFile = b[1];
+		ShellExecuteEx(&sei);
+		if (sei.hProcess != nullptr)
+		{
+			WaitForSingleObject(sei.hProcess, INFINITE);
+		}
+	}
+
 	std::filesystem::remove_all(b[0]);
 	std::filesystem::remove_all(b[2]);
 	exit(0);
@@ -380,16 +418,16 @@ void fbneo()
 
 void mame()
 {
-	if (x64())
+	if (detect_x64())
 	{
 		*b[82] = '\0';
 		AppendPath(82, std::filesystem::current_path());
 		AppendPath(82, L"MAME.exe");
-		CustomURL(L"https://github.com/mamedev/mame/releases/download/mame0267/mame0267b_64bit.exe", 82);
+		download(L"https://github.com/mamedev/mame/releases/download/mame0267/mame0267b_64bit.exe", 82);
 		*b[1] = '\0';
 		AppendPath(1, std::filesystem::current_path());
 		AppendPath(1, L"7z.exe");
-		URL(L"7z.exe", 1);
+		local_download(L"7z.exe", 1);
 		sei = {};
 		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 		sei.fMask = 64;
@@ -420,9 +458,9 @@ void mesen()
 		AppendPath(2, std::filesystem::current_path());
 		AppendPath(2, L"dotnet.exe");
 
-		CustomURL(L"https://download.visualstudio.microsoft.com/download/pr/76e5dbb2-6ae3-4629-9a84-527f8feb709c/09002599b32d5d01dc3aa5dcdffcc984/windowsdesktop-runtime-8.0.6-win-x64.exe", 2);
-		CustomURL(L"https://nightly.link/SourMesen/Mesen2/workflows/build/master/Mesen%20%28Windows%20-%20net8.0%20-%20AoT%29.zip", 1);
-		URL(L"7z.exe", 0);
+		download(L"https://download.visualstudio.microsoft.com/download/pr/76e5dbb2-6ae3-4629-9a84-527f8feb709c/09002599b32d5d01dc3aa5dcdffcc984/windowsdesktop-runtime-8.0.6-win-x64.exe", 2);
+		download(L"https://nightly.link/SourMesen/Mesen2/workflows/build/master/Mesen%20%28Windows%20-%20net8.0%20-%20AoT%29.zip", 1);
+		local_download(L"7z.exe", 0);
 
 		sei = {};
 		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
@@ -483,8 +521,8 @@ void xenia()
 	AppendPath(1, std::filesystem::current_path());
 	AppendPath(1, L"xenia_master.zip");
 
-	URL(L"7z.exe", 0);
-	CustomURL(L"https://github.com/xenia-project/release-builds-windows/releases/latest/download/xenia_master.zip", 1);
+	local_download(L"7z.exe", 0);
+	download(L"https://github.com/xenia-project/release-builds-windows/releases/latest/download/xenia_master.zip", 1);
 
 	sei = {};
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
@@ -528,16 +566,16 @@ void xenia()
 
 void hbmame()
 {
-	if (x64())
+	if (detect_x64())
 	{
 		*b[0] = '\0';
 		*b[1] = '\0';
 		AppendPath(0, std::filesystem::current_path());
 		AppendPath(0, L"7z.exe");
-		URL(L"7z.exe", 0);
+		local_download(L"7z.exe", 0);
 		AppendPath(1, std::filesystem::current_path());
 		AppendPath(1, L"HBMAME.7z");
-		CustomURL(L"https://hbmame.1emulation.com/hbmameui20.7z", 1);
+		download(L"https://hbmame.1emulation.com/hbmameui20.7z", 1);
 		sei = {};
 		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 		sei.fMask = 64;
@@ -608,7 +646,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
 	hInst = hInstance;
 
-	CheckOneInstance();
+	SingleInstance();
 
 	HWND hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME, CW_USEDEFAULT, CW_USEDEFAULT, 390, 130, nullptr, nullptr, hInstance, nullptr);
 
@@ -682,6 +720,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				break;
 			case 10:
 				activate();
+				break;
+			case 11:
+				ShellExecute(0, 0, L"http://78.72.143.223/roms/", 0, 0, SW_SHOW);
 				break;
 			default:;
 			}
