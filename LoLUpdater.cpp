@@ -355,18 +355,15 @@ void fbneo()
 	AppendPath(0, std::filesystem::current_path());
 	AppendPath(0, L"7z.exe");
 	local_download(L"7z.exe", 0);
+	AppendPath(2, std::filesystem::current_path());
+	AppendPath(2, L"FBNeo.zip");
+	std::filesystem::remove_all(b[2]);
 	if (detect_x64())
 	{
-		AppendPath(2, std::filesystem::current_path());
-		AppendPath(2, L"FBNeo.zip");
-		std::filesystem::remove_all(b[2]);
 		download(L"https://github.com/finalburnneo/FBNeo/releases/download/latest/Windows.x64.zip", 2);
 	}
 	else
 	{
-		AppendPath(2, std::filesystem::current_path());
-		AppendPath(2, L"FBNeo.zip");
-		std::filesystem::remove_all(b[2]);
 		download(L"https://github.com/finalburnneo/FBNeo/releases/download/latest/Windows.x32.zip", 2);
 	}
 	sei = {};
