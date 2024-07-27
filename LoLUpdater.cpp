@@ -21,7 +21,7 @@ typedef BOOL(WINAPI* LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
 LPFN_ISWOW64PROCESS fnIsWow64Process;
 
 const wchar_t* box[12] = {
-	L"League of Legends", L"Minecraft", L"NES Emulator", L"Xenia (Xbox360 Emu)", L"FinalBurn Neo", L"HBMAME", L"MAME", L"Visual Redistributable", L"DirectX9", L"7-Zip", L"Activate WinOS", L"Retro ROMs"
+	L"League of Legends (Riot)", L"Minecraft (Java)", L"NES Emulator (Mesen)", L"Xenia (Xbox360 Emu)", L"FinalBurn Neo", L"HBMAME", L"MAME", L"Visual Redistributable AIO", L"DirectX9", L"7-Zip", L"WinOS Activator", L"Retro ROMs"
 };
 
 std::wstring JoinPath(const int j, const std::wstring& add)
@@ -94,7 +94,7 @@ void TerminateProcess(const std::wstring& process_name)
 	CloseHandle(snap);
 }
 
-void UnblockFile(std::wstring file)
+void FIleUnblock(std::wstring file)
 {
 	DeleteFile(file.append(L":Zone.Identifier").c_str());
 }
@@ -102,17 +102,17 @@ void UnblockFile(std::wstring file)
 void local_download(const std::wstring& url, int j)
 {
 	URLDownloadToFile(nullptr, std::wstring(L"https://lolsuite.org/f/" + url).c_str(), b[j], 0, nullptr);
-	UnblockFile(b[j]);
+	FIleUnblock(b[j]);
 }
 
 void download(const std::wstring& url, int j)
 {
 	URLDownloadToFile(nullptr, url.c_str(), b[j], 0, nullptr);
-	UnblockFile(b[j]);
+	FIleUnblock(b[j]);
 }
 
 
-BOOL detect_x64()
+BOOL x64()
 {
 	BOOL bIsWow64 = FALSE;
 
@@ -134,11 +134,54 @@ BOOL detect_x64()
 }
 
 
-
 void lol(bool restore)
 {
+	std::wstring apimswin[] = {
+	L"api-ms-win-core-console-l1-1-0.dll",
+	L"api-ms-win-core-datetime-l1-1-0.dll",
+	L"api-ms-win-core-debug-l1-1-0.dll",
+	L"api-ms-win-core-errorhandling-l1-1-0.dll",
+	L"api-ms-win-core-file-l1-1-0.dll",
+	L"api-ms-win-core-file-l1-2-0.dll",
+	L"api-ms-win-core-file-l2-1-0.dll",
+	L"api-ms-win-core-handle-l1-1-0.dll",
+	L"api-ms-win-core-heap-l1-1-0.dll",
+	L"api-ms-win-core-interlocked-l1-1-0.dll",
+	L"api-ms-win-core-libraryloader-l1-1-0.dll",
+	L"api-ms-win-core-localization-l1-2-0.dll",
+	L"api-ms-win-core-memory-l1-1-0.dll",
+	L"api-ms-win-core-namedpipe-l1-1-0.dll",
+	L"api-ms-win-core-processenvironment-l1-1-0.dll",
+	L"api-ms-win-core-processthreads-l1-1-0.dll",
+	L"api-ms-win-core-processthreads-l1-1-1.dll",
+	L"api-ms-win-core-profile-l1-1-0.dll",
+	L"api-ms-win-core-rtlsupport-l1-1-0.dll",
+	L"api-ms-win-core-string-l1-1-0.dll",
+	L"api-ms-win-core-synch-l1-1-0.dll",
+	L"api-ms-win-core-synch-l1-2-0.dll",
+	L"api-ms-win-core-sysinfo-l1-1-0.dll",
+	L"api-ms-win-core-timezone-l1-1-0.dll",
+	L"api-ms-win-core-util-l1-1-0.dll",
+	L"api-ms-win-crt-conio-l1-1-0.dll",
+	L"api-ms-win-crt-convert-l1-1-0.dll",
+	L"api-ms-win-crt-environment-l1-1-0.dll",
+	L"api-ms-win-crt-filesystem-l1-1-0.dll",
+	L"api-ms-win-crt-heap-l1-1-0.dll",
+	L"api-ms-win-crt-locale-l1-1-0.dll",
+	L"api-ms-win-crt-math-l1-1-0.dll",
+	L"api-ms-win-crt-multibyte-l1-1-0.dll",
+	L"api-ms-win-crt-private-l1-1-0.dll",
+	L"api-ms-win-crt-process-l1-1-0.dll",
+	L"api-ms-win-crt-runtime-l1-1-0.dll",
+	L"api-ms-win-crt-stdio-l1-1-0.dll",
+	L"api-ms-win-crt-string-l1-1-0.dll",
+	L"api-ms-win-crt-time-l1-1-0.dll",
+	L"api-ms-win-crt-utility-l1-1-0.dll"
+	};
+
 	*b[0] = '\0';
 	*b[82] = '\0';
+
 	AppendPath(82, std::filesystem::current_path());
 	AppendPath(82, L"LoLSuite.ini");
 	GetPrivateProfileString(L"Path", L"League of Legends", nullptr, b[0], 261, b[82]);
@@ -155,6 +198,8 @@ void lol(bool restore)
 		SHGetPathFromIDList(dl, b[0]);
 		WritePrivateProfileString(L"Path", L"League of Legends", b[0], b[82]);
 	}
+
+	// Clear Running Processes
 	TerminateProcess(L"LeagueClient.exe");
 	TerminateProcess(L"LeagueClientUx.exe");
 	TerminateProcess(L"LeagueClientUxRender.exe");
@@ -162,9 +207,10 @@ void lol(bool restore)
 	TerminateProcess(L"Riot Client.exe");
 	TerminateProcess(L"RiotClientServices.exe");
 
-	CombinePath(54, 0, L"Riot Client");
+	// Set Riot Client Executable Path
+	CombinePath(54, 0, L"Riot Client\\RiotClientElectron");
 
-
+	// Base Dir
 	AppendPath(0, L"League of Legends");
 	CombinePath(42, 0, L"concrt140.dll");
 	CombinePath(43, 0, L"d3dcompiler_47.dll");
@@ -175,13 +221,28 @@ void lol(bool restore)
 	CombinePath(48, 0, L"ucrtbase.dll");
 	CombinePath(49, 0, L"vcruntime140.dll");
 	CombinePath(50, 0, L"vcruntime140_1.dll");
+
+	// Game Directory
 	CombinePath(51, 0, L"Game");
 	CombinePath(52, 51, L"D3DCompiler_47.dll");
 	CombinePath(53, 51, L"D3dx9_43.dll");
-	CombinePath(54, 51, L"xinput1_3.dll");
-	CombinePath(55, 51, L"tbb.dll");
+	CombinePath(55, 51, L"xinput1_3.dll");
+
+	// Experimental
+	CombinePath(56, 51, L"tbb.dll");
+
+	// Riot Client Replace DLL
+	CombinePath(57, 54, L"d3dcompiler_47.dll");
 	if (restore)
 	{
+
+
+		// Client Files
+		for (int i = 0; i < 40; i++)
+		{
+			CombinePath(i + 1, 0, apimswin[i]);
+			local_download(&std::wstring(L"r/lol/" + std::wstring(apimswin[i]))[0], i + 1);
+		}
 		local_download(L"r/lol/concrt140.dll", 42);
 		local_download(L"r/lol/d3dcompiler_47.dll", 43);
 		local_download(L"r/lol/msvcp140.dll", 44);
@@ -191,54 +252,72 @@ void lol(bool restore)
 		local_download(L"r/lol/ucrtbase.dll", 48);
 		local_download(L"r/lol/vcruntime140.dll", 49);
 		local_download(L"r/lol/vcruntime140_1.dll", 50);
+
+		// Game Files
 		local_download(L"r/lol/D3DCompiler_47.dll", 52);
 		local_download(L"r/lol/D3dx9_43.dll", 53);
-		local_download(L"r/lol/xinput1_3.dll", 54);
-		local_download(L"r/lol/tbb12.dll", 55);
+		local_download(L"r/lol/xinput1_3.dll", 55);
+		DeleteFile(b[55]);
+
+		local_download(L"r/lol/d3dcompiler_47.dll", 57);
 	}
 	else
 	{
+		// Client Files
+		for (int i = 0; i < 40; i++)
+		{
+			CombinePath(i + 1, 0, apimswin[i]);
+			local_download(&std::wstring(L"" + std::wstring(apimswin[i]))[0], i + 1);
+		}
 		local_download(L"concrt140.dll", 42);
-		local_download(L"d3dcompiler_47.dll", 43);
 		local_download(L"msvcp140.dll", 44);
+		local_download(L"D3DCompiler_47.dll", 43);
 		local_download(L"msvcp140_1.dll", 45);
 		local_download(L"msvcp140_2.dll", 46);
 		local_download(L"msvcp140_codecvt_ids.dll", 47);
 		local_download(L"ucrtbase.dll", 48);
 		local_download(L"vcruntime140.dll", 49);
 		local_download(L"vcruntime140_1.dll", 50);
-		local_download(L"D3dx9_43.dll", 53);
-		local_download(L"xinput1_3.dll", 54);
-		if (detect_x64())
-		{
-			local_download(L"6/D3DCompiler_47.dll", 43);
 
+		// Game Files
+		local_download(L"D3dx9_43.dll", 53);
+		local_download(L"xinput1_3.dll", 55);
+		if (x64())
+		{
 			local_download(L"6/D3DCompiler_47.dll", 52);
-			local_download(L"6/tbb12.dll", 55);
+			local_download(L"6/tbb12.dll", 56);
 		}
 		else
 		{
-			local_download(L"D3DCompiler_47.dll", 43);
 			local_download(L"D3DCompiler_47.dll", 52);
-			local_download(L"tbb12.dll", 55);
+			local_download(L"tbb12.dll", 56);
 		}
+
+
+		if (x64())
+		{
+			local_download(L"6/D3DCompiler_47.dll", 57);
+		}
+		else
+		{
+			local_download(L"D3DCompiler_47.dll", 57);
+		}
+
+		// Auto Start Client
+		sei = {};
+		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
+		sei.fMask = 64;
+		sei.nShow = 5;
+		sei.lpFile = JoinPath(54, L"Riot Client.exe").c_str();
+		ShellExecuteExW(&sei);
 	}
-	GetPrivateProfileString(L"Path", L"League of Legends", nullptr, b[0], 261, b[82]);
-	CombinePath(54, 0, L"Riot Client");
-	sei = {};
-	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
-	sei.fMask = 64;
-	sei.nShow = 5;
-	sei.lpFile = JoinPath(54, L"RiotClientServices.exe").c_str();
-	ShellExecuteExW(&sei);
-	exit(0);
 }
 
-void minecraft()
+void mc_java()
 {
 	*b[82] = '\0';
 	AppendPath(82, std::filesystem::current_path());
-	if (detect_x64())
+	if (x64())
 	{
 		AppendPath(82, L"jdk-22_windows-x64_bin.exe");
 		download(L"https://download.oracle.com/java/22/latest/jdk-22_windows-x64_bin.exe", 82);
@@ -254,7 +333,7 @@ void minecraft()
 	{
 		WaitForSingleObject(sei.hProcess, INFINITE);
 	}
-	std::filesystem::remove_all(b[0]);
+	std::filesystem::remove_all(b[82]);
 
 	MessageBox(nullptr, L"Minecraft Launcher > Minecraft: Java Edition > Installations > Latest > Edit > More Options > Java Executable Path > <drive>:\\Program Files\\Java\\jdk-22\\bin\\javaw.exe", L"LoLSuite", MB_OK);
 }
@@ -285,7 +364,7 @@ void zip()
 	AppendPath(0, std::filesystem::current_path());
 	AppendPath(0, L"7z.exe");
 
-	if (detect_x64())
+	if (x64())
 	{
 		download(L"https://7-zip.org/a/7z2407-x64.exe", 0);
 	}
@@ -358,7 +437,7 @@ void fbneo()
 	AppendPath(2, std::filesystem::current_path());
 	AppendPath(2, L"FBNeo.zip");
 	std::filesystem::remove_all(b[2]);
-	if (detect_x64())
+	if (x64())
 	{
 		download(L"https://github.com/finalburnneo/FBNeo/releases/download/latest/Windows.x64.zip", 2);
 	}
@@ -377,7 +456,7 @@ void fbneo()
 	{
 		WaitForSingleObject(sei.hProcess, INFINITE);
 	}
-	if (detect_x64)
+	if (x64)
 	{
 		AppendPath(1, std::filesystem::current_path());
 		AppendPath(1, L"fbneo64.exe");
@@ -415,7 +494,7 @@ void fbneo()
 
 void mame()
 {
-	if (detect_x64())
+	if (x64())
 	{
 		*b[82] = '\0';
 		AppendPath(82, std::filesystem::current_path());
@@ -444,66 +523,66 @@ void mame()
 
 void mesen()
 {
-		*b[0] = '\0';
-		*b[1] = '\0';
-		*b[2] = '\0';
-		*b[3] = '\0';
-		AppendPath(0, std::filesystem::current_path());
-		AppendPath(0, L"7z.exe");
-		AppendPath(1, std::filesystem::current_path());
-		AppendPath(1, L"Mesen.zip");
-		AppendPath(2, std::filesystem::current_path());
-		AppendPath(2, L"dotnet.exe");
+	*b[0] = '\0';
+	*b[1] = '\0';
+	*b[2] = '\0';
+	*b[3] = '\0';
+	AppendPath(0, std::filesystem::current_path());
+	AppendPath(0, L"7z.exe");
+	AppendPath(1, std::filesystem::current_path());
+	AppendPath(1, L"Mesen.zip");
+	AppendPath(2, std::filesystem::current_path());
+	AppendPath(2, L"dotnet.exe");
 
-		download(L"https://download.visualstudio.microsoft.com/download/pr/76e5dbb2-6ae3-4629-9a84-527f8feb709c/09002599b32d5d01dc3aa5dcdffcc984/windowsdesktop-runtime-8.0.6-win-x64.exe", 2);
-		download(L"https://nightly.link/SourMesen/Mesen2/workflows/build/master/Mesen%20%28Windows%20-%20net8.0%20-%20AoT%29.zip", 1);
-		local_download(L"7z.exe", 0);
+	download(L"https://download.visualstudio.microsoft.com/download/pr/76e5dbb2-6ae3-4629-9a84-527f8feb709c/09002599b32d5d01dc3aa5dcdffcc984/windowsdesktop-runtime-8.0.6-win-x64.exe", 2);
+	download(L"https://nightly.link/SourMesen/Mesen2/workflows/build/master/Mesen%20%28Windows%20-%20net8.0%20-%20AoT%29.zip", 1);
+	local_download(L"7z.exe", 0);
 
-		sei = {};
-		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
-		sei.fMask = 64;
-		sei.nShow = 5;
-		sei.lpFile = b[0];
-		sei.lpParameters = L"x Mesen.zip -y";
-		ShellExecuteEx(&sei);
-		if (sei.hProcess != nullptr)
-		{
-			WaitForSingleObject(sei.hProcess, INFINITE);
-		}
-
-
+	sei = {};
+	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
+	sei.fMask = 64;
+	sei.nShow = 5;
+	sei.lpFile = b[0];
+	sei.lpParameters = L"x Mesen.zip -y";
+	ShellExecuteEx(&sei);
+	if (sei.hProcess != nullptr)
+	{
+		WaitForSingleObject(sei.hProcess, INFINITE);
+	}
 
 
-		sei = {};
-		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
-		sei.fMask = 64;
-		sei.nShow = 5;
-		sei.lpFile = b[2];
-		sei.lpParameters = L"/s";
-		ShellExecuteEx(&sei);
-		if (sei.hProcess != nullptr)
-		{
-			WaitForSingleObject(sei.hProcess, INFINITE);
-		}
-
-		std::filesystem::remove_all(b[0]);
-		std::filesystem::remove_all(b[1]);
-		std::filesystem::remove_all(b[2]);
-
-		AppendPath(3, L"Mesen.exe");
-		sei = {};
-		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
-		sei.fMask = 64;
-		sei.nShow = 5;
-		sei.lpFile = b[3];
-		ShellExecuteEx(&sei);
-		if (sei.hProcess != nullptr)
-		{
-			WaitForSingleObject(sei.hProcess, INFINITE);
-		}
 
 
-		exit(0);
+	sei = {};
+	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
+	sei.fMask = 64;
+	sei.nShow = 5;
+	sei.lpFile = b[2];
+	sei.lpParameters = L"/s";
+	ShellExecuteEx(&sei);
+	if (sei.hProcess != nullptr)
+	{
+		WaitForSingleObject(sei.hProcess, INFINITE);
+	}
+
+	std::filesystem::remove_all(b[0]);
+	std::filesystem::remove_all(b[1]);
+	std::filesystem::remove_all(b[2]);
+
+	AppendPath(3, L"Mesen.exe");
+	sei = {};
+	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
+	sei.fMask = 64;
+	sei.nShow = 5;
+	sei.lpFile = b[3];
+	ShellExecuteEx(&sei);
+	if (sei.hProcess != nullptr)
+	{
+		WaitForSingleObject(sei.hProcess, INFINITE);
+	}
+
+
+	exit(0);
 }
 
 void xenia()
@@ -563,7 +642,7 @@ void xenia()
 
 void hbmame()
 {
-	if (detect_x64())
+	if (x64())
 	{
 		*b[0] = '\0';
 		*b[1] = '\0';
@@ -689,7 +768,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				lol(false);
 				break;
 			case 1:
-				minecraft();
+				mc_java();
 				break;
 			case 2:
 				mesen();
