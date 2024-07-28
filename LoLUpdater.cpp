@@ -20,8 +20,8 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 typedef BOOL(WINAPI* LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
 LPFN_ISWOW64PROCESS fnIsWow64Process;
 
-const wchar_t* box[12] = {
-	L"League of Legends (Riot)", L"Minecraft (Java)", L"NES Emulator (Mesen)", L"Xenia (Xbox360 Emu)", L"FinalBurn Neo", L"HBMAME", L"MAME", L"Visual Redistributable AIO", L"DirectX9", L"7-Zip", L"WinOS Activator", L"Retro ROMs"
+const wchar_t* box[10] = {
+	L"League of Legends (Riot)", L"Minecraft (Java)", L"NES Emulator (Mesen)", L"Xenia (Xbox360 Emu)", L"FinalBurn Neo", L"HBMAME", L"MAME", L"Visual Redistributable AIO", L"7-Zip", L"WinOS Activator"
 };
 
 std::wstring JoinPath(const int j, const std::wstring& add)
@@ -766,6 +766,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
 			case 0:
 				lol(false);
+				DirectX9();
 				break;
 			case 1:
 				mc_java();
@@ -789,16 +790,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				winaio();
 				break;
 			case 8:
-				DirectX9();
-				break;
-			case 9:
 				zip();
 				break;
-			case 10:
+			case 9:
 				activate();
-				break;
-			case 11:
-				ShellExecute(0, 0, L"http://78.72.143.223/roms/", 0, 0, SW_SHOW);
 				break;
 			default:;
 			}
@@ -809,6 +804,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
 			case 0:
 				lol(true);
+				DirectX9();
 				break;
 			default:;
 			}
