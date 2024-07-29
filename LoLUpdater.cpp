@@ -561,9 +561,6 @@ void mame()
 		AppendPath(1, L"7z.exe");
 		local_download(L"7z.exe", 1);
 
-		std::filesystem::remove_all(b[0]);
-		std::filesystem::remove_all(b[1]);
-
 		sei = {};
 		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 		sei.fMask = 64;
@@ -577,6 +574,9 @@ void mame()
 		}
 
 	}
+	std::filesystem::remove_all(b[0]);
+	std::filesystem::remove_all(b[1]);
+
 	exit(0);
 }
 
