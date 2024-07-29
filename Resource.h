@@ -1,9 +1,5 @@
-//{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ generated include file.
-// Used by MOBASweet.rc
-//
 #define IDC_MYICON                      2
-#define IDD_LOLUPDATER_DIALOG            102
+#define IDD_LOLUPDATER_DIALOG           102
 #define IDS_APP_TITLE                   103
 #define IDD_ABOUTBOX                    103
 #define IDM_ABOUT                       104
@@ -12,11 +8,9 @@
 #define IDC_LOLUPDATER                  109
 #define IDR_MAINFRAME                   128
 #define ID_ASDASD                       32771
-#define ID_LOLUPDATER_MOBASUITE            32772
+#define ID_LOLUPDATER_MOBASUITE         32772
 #define IDC_STATIC                      -1
 
-// Next default values for new objects
-// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1

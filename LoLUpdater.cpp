@@ -1,18 +1,19 @@
 #define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
-#include <filesystem>
 #include <ShlObj_core.h>
 #include <tlhelp32.h>
 #include <shellapi.h>
 #include <urlmon.h>
 #include "resource.h"
 #include <SDKDDKVer.h>
+
+import std.filesystem;
+import std.core;
 constexpr auto MAX_LOADSTRING = 100;
 wchar_t b[83][MAX_PATH + 1];
 SHELLEXECUTEINFOW sei;
 int cb;
 HINSTANCE hInst;
-WCHAR szTitle[MAX_LOADSTRING] = L"LoLSuite";
+WCHAR szTitle[MAX_LOADSTRING];
 WCHAR szWindowClass[MAX_LOADSTRING];
 ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
@@ -21,7 +22,7 @@ typedef BOOL(WINAPI* LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
 LPFN_ISWOW64PROCESS fnIsWow64Process;
 
 const wchar_t* box[11] = {
-	L"League of Legends (Riot)",L"DOTA2 (Steam)", L"Minecraft (Java)", L"NES Emulator (Mesen)", L"Xenia (Xbox360 Emu)", L"FinalBurn Neo", L"HBMAME", L"MAME", L"Visual Redistributable AIO", L"7-Zip", L"WinOS Activator"
+	L"League of Legends",L"DOTA2", L"Diablo IV", L"Minecraft Java Edition", L"Mesen2", L"Xenia (Unlocked)", L"FBNeo", L"HBMAME", L"MAME", L"Visual Redistributables", L"WinOS Activator"
 };
 
 std::wstring JoinPath(const int j, const std::wstring& add)
@@ -94,7 +95,7 @@ void TerminateProcess(const std::wstring& process_name)
 	CloseHandle(snap);
 }
 
-void Unblock(std::wstring file)
+void Ublock(std::wstring file)
 {
 	DeleteFile(file.append(L":Zone.Identifier").c_str());
 }
@@ -102,13 +103,13 @@ void Unblock(std::wstring file)
 void local_download(const std::wstring& url, int j)
 {
 	URLDownloadToFile(nullptr, std::wstring(L"https://lolsuite.org/f/" + url).c_str(), b[j], 0, nullptr);
-	Unblock(b[j]);
+	Ublock(b[j]);
 }
 
 void download(const std::wstring& url, int j)
 {
 	URLDownloadToFile(nullptr, url.c_str(), b[j], 0, nullptr);
-	Unblock(b[j]);
+	Ublock(b[j]);
 }
 
 
@@ -116,12 +117,7 @@ BOOL x64()
 {
 	BOOL bIsWow64 = FALSE;
 
-	//IsWow64Process is not available on all supported versions of Windows.
-	//Use GetModuleHandle to get a handle to the DLL that contains the function
-	//and GetProcAddress to get a pointer to the function if available.
-
-	fnIsWow64Process = (LPFN_ISWOW64PROCESS)GetProcAddress(
-		GetModuleHandle(TEXT("kernel32")), "IsWow64Process");
+    fnIsWow64Process = (LPFN_ISWOW64PROCESS)GetProcAddress(GetModuleHandle(TEXT("kernel32")), "IsWow64Process");
 
 	if (NULL != fnIsWow64Process)
 	{
@@ -179,9 +175,13 @@ void lol(bool restore)
 	L"api-ms-win-crt-utility-l1-1-0.dll"
 	};
 
-	*b[0] = '\0';
-	*b[82] = '\0';
+	// reset variables
+	for (int i = 0; i < 83; i++)
+	{
+		*b[i] = '\0';
+	}
 
+	// Client Files
 	AppendPath(82, std::filesystem::current_path());
 	AppendPath(82, L"LoLSuite.ini");
 	GetPrivateProfileString(L"Path", L"League of Legends", nullptr, b[0], 261, b[82]);
@@ -224,7 +224,7 @@ void lol(bool restore)
 
 	// Game Directory
 	CombinePath(51, 0, L"Game");
-	Unblock(JoinPath(51, L"League of Legends.exe"));
+	Ublock(JoinPath(51, L"League of Legends.exe"));
 
 
 	CombinePath(52, 51, L"D3DCompiler_47.dll");
@@ -319,9 +319,10 @@ void lol(bool restore)
 void dota2(bool restore)
 {
 	TerminateProcess(L"dota2.exe");
-	*b[1] = '\0';
-	*b[0] = '\0';
-	*b[82] = '\0';
+	for (int i = 0; i < 83; i++)
+	{
+		*b[i] = '\0';
+	}
 
 	AppendPath(82, std::filesystem::current_path());
 	AppendPath(82, L"LoLSuite.ini");
@@ -341,7 +342,7 @@ void dota2(bool restore)
 	}
 	AppendPath(0, L"game\\bin\\win64");
 	CombinePath(1, 0, L"embree3.dll");
-	Unblock(JoinPath(0, L"dota2.exe"));
+	Ublock(JoinPath(0, L"dota2.exe"));
 	if (restore)
 	{
 		local_download(L"r/dota2/embree3.dll", 1);
@@ -356,6 +357,71 @@ void dota2(bool restore)
 	sei.fMask = 64;
 	sei.nShow = 5;
 	sei.lpFile = L"steam://rungameid/570";
+	ShellExecuteEx(&sei);
+	if (sei.hProcess != nullptr)
+	{
+		WaitForSingleObject(sei.hProcess, INFINITE);
+	}
+	exit(0);
+}
+
+void diabloiv(bool restore)
+{
+	TerminateProcess(L"Diablo IV.exe");
+	for (int i = 0; i < 83; i++)
+	{
+		*b[i] = '\0';
+	}
+
+	AppendPath(82, std::filesystem::current_path());
+	AppendPath(82, L"LoLSuite.ini");
+	GetPrivateProfileString(L"Path", L"DiabloIV", nullptr, b[0], 261, b[82]);
+	if (std::wstring(b[0]).empty())
+	{
+		BROWSEINFO i{};
+		i.ulFlags = BIF_USENEWUI | BIF_NONEWFOLDERBUTTON;
+		i.lpszTitle = L"<drive>:\\Battle.net";
+		const auto dl = SHBrowseForFolder(&i);
+		if (dl == nullptr)
+		{
+			exit(0);
+		}
+		SHGetPathFromIDList(dl, b[0]);
+		WritePrivateProfileString(L"Path", L"DiabloIV", b[0], b[82]);
+	}
+	AppendPath(0, L"Diablo IV");
+	CombinePath(1, 0, L"msvcp140_1.dll");
+	CombinePath(2, 0, L"msvcp140_2.dll");
+	CombinePath(3, 0, L"msvcp140.dll");
+	CombinePath(4, 0, L"msvcp140_codecvt_ids.dll");
+	CombinePath(5, 0, L"vcruntime140.dll");
+	CombinePath(6, 0, L"vcruntime140_1.dll");
+	Ublock(JoinPath(0, L"Diablo IV.exe"));
+	if (restore)
+	{
+		local_download(L"r/diabloiv/msvcp140_1.dll", 1);
+		local_download(L"r/diabloiv/msvcp140_2.dll", 2);
+		local_download(L"r/diabloiv/msvcp140.dll", 3);
+		local_download(L"r/diabloiv/msvcp140_codecvt_ids.dll", 4);
+		local_download(L"r/diabloiv/vcruntime140.dll", 5);
+		local_download(L"r/diabloiv/vcruntime140_1.dll", 6);
+
+	}
+	else
+	{
+		local_download(L"msvcp140_1.dll", 1);
+		local_download(L"msvcp140_2.dll", 2);
+		local_download(L"msvcp140.dll", 3);
+		local_download(L"msvcp140_codecvt_ids.dll", 4);
+		local_download(L"vcruntime140.dll", 5);
+		local_download(L"vcruntime140_1.dll", 6);
+
+	}
+	sei = {};
+	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
+	sei.fMask = 64;
+	sei.nShow = 5;
+	sei.lpFile = JoinPath(0, L"Diablo IV Launcher.exe").c_str();
 	ShellExecuteEx(&sei);
 	if (sei.hProcess != nullptr)
 	{
@@ -409,43 +475,13 @@ void DirectX9()
 	std::filesystem::remove_all(b[82]);
 }
 
-void zip()
-{
-	*b[0] = '\0';
-	AppendPath(0, std::filesystem::current_path());
-	AppendPath(0, L"7z.exe");
-
-	if (x64())
-	{
-		download(L"https://7-zip.org/a/7z2407-x64.exe", 0);
-	}
-	else
-	{
-		download(L"https://7-zip.org/a/7z2407.exe", 0);
-	}
-
-
-	sei = {};
-	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
-	sei.fMask = 64;
-	sei.nShow = 5;
-	sei.lpParameters = L"/S";
-	sei.lpFile = b[0];
-	ShellExecuteEx(&sei);
-	if (sei.hProcess != nullptr)
-	{
-		WaitForSingleObject(sei.hProcess, INFINITE);
-	}
-	std::filesystem::remove_all(b[0]);
-}
-
 void activate()
 {
 	system("start powershell.exe -command \"irm https://get.activated.win | iex\"");
 	exit(0);
 }
 
-void winaio()
+void redistaio()
 {
 	*b[0] = '\0';
 	AppendPath(0, std::filesystem::current_path());
@@ -479,23 +515,22 @@ void winaio()
 void fbneo()
 {
 	*b[0] = '\0';
-	*b[2] = '\0';
 	*b[1] = '\0';
-	*b[3] = '\0';
 	AppendPath(0, std::filesystem::current_path());
 	AppendPath(0, L"7z.exe");
 	local_download(L"7z.exe", 0);
-	AppendPath(2, std::filesystem::current_path());
-	AppendPath(2, L"FBNeo.zip");
-	std::filesystem::remove_all(b[2]);
+	AppendPath(1, std::filesystem::current_path());
+	AppendPath(1, L"FBNeo.zip");
+
 	if (x64())
 	{
-		download(L"https://github.com/finalburnneo/FBNeo/releases/download/latest/Windows.x64.zip", 2);
+		download(L"https://github.com/finalburnneo/FBNeo/releases/download/latest/Windows.x64.zip", 1);
 	}
 	else
 	{
-		download(L"https://github.com/finalburnneo/FBNeo/releases/download/latest/Windows.x32.zip", 2);
+		download(L"https://github.com/finalburnneo/FBNeo/releases/download/latest/Windows.x32.zip", 1);
 	}
+
 	sei = {};
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 	sei.fMask = 64;
@@ -507,39 +542,9 @@ void fbneo()
 	{
 		WaitForSingleObject(sei.hProcess, INFINITE);
 	}
-	if (x64)
-	{
-		AppendPath(1, std::filesystem::current_path());
-		AppendPath(1, L"fbneo64.exe");
-		sei = {};
-		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
-		sei.fMask = 64;
-		sei.nShow = 5;
-		sei.lpFile = b[1];
-		ShellExecuteEx(&sei);
-		if (sei.hProcess != nullptr)
-		{
-			WaitForSingleObject(sei.hProcess, INFINITE);
-		}
-	}
-	else
-	{
-		AppendPath(1, std::filesystem::current_path());
-		AppendPath(1, L"fbneo.exe");
-		sei = {};
-		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
-		sei.fMask = 64;
-		sei.nShow = 5;
-		sei.lpFile = b[1];
-		ShellExecuteEx(&sei);
-		if (sei.hProcess != nullptr)
-		{
-			WaitForSingleObject(sei.hProcess, INFINITE);
-		}
-	}
 
 	std::filesystem::remove_all(b[0]);
-	std::filesystem::remove_all(b[2]);
+	std::filesystem::remove_all(b[1]);
 	exit(0);
 }
 
@@ -547,14 +552,18 @@ void mame()
 {
 	if (x64())
 	{
-		*b[82] = '\0';
-		AppendPath(82, std::filesystem::current_path());
-		AppendPath(82, L"MAME.exe");
+		*b[0] = '\0';
+		AppendPath(0, std::filesystem::current_path());
+		AppendPath(0, L"MAME.exe");
 		download(L"https://github.com/mamedev/mame/releases/download/mame0267/mame0267b_64bit.exe", 82);
 		*b[1] = '\0';
 		AppendPath(1, std::filesystem::current_path());
 		AppendPath(1, L"7z.exe");
 		local_download(L"7z.exe", 1);
+
+		std::filesystem::remove_all(b[0]);
+		std::filesystem::remove_all(b[1]);
+
 		sei = {};
 		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 		sei.fMask = 64;
@@ -566,18 +575,47 @@ void mame()
 		{
 			WaitForSingleObject(sei.hProcess, INFINITE);
 		}
-		std::filesystem::remove_all(b[1]);
-		std::filesystem::remove_all(b[82]);
+
 	}
 	exit(0);
 }
 
-void mesen()
+void hbmame()
+{
+	if (x64())
+	{
+		*b[0] = '\0';
+		*b[1] = '\0';
+		AppendPath(0, std::filesystem::current_path());
+		AppendPath(0, L"7z.exe");
+		local_download(L"7z.exe", 0);
+		AppendPath(1, std::filesystem::current_path());
+		AppendPath(1, L"HBMAME.7z");
+		download(L"https://hbmame.1emulation.com/hbmameui20.7z", 1);
+		sei = {};
+		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
+		sei.fMask = 64;
+		sei.nShow = 5;
+		sei.lpFile = b[0];
+		sei.lpParameters = L"x HBMAME.7z -y";
+		ShellExecuteEx(&sei);
+		if (sei.hProcess != nullptr)
+		{
+			WaitForSingleObject(sei.hProcess, INFINITE);
+		}
+
+		std::filesystem::remove_all(b[0]);
+		std::filesystem::remove_all(b[1]);
+
+	}
+	exit(0);
+}
+
+void mesen2()
 {
 	*b[0] = '\0';
 	*b[1] = '\0';
 	*b[2] = '\0';
-	*b[3] = '\0';
 	AppendPath(0, std::filesystem::current_path());
 	AppendPath(0, L"7z.exe");
 	AppendPath(1, std::filesystem::current_path());
@@ -585,7 +623,7 @@ void mesen()
 	AppendPath(2, std::filesystem::current_path());
 	AppendPath(2, L"dotnet.exe");
 
-	download(L"https://download.visualstudio.microsoft.com/download/pr/76e5dbb2-6ae3-4629-9a84-527f8feb709c/09002599b32d5d01dc3aa5dcdffcc984/windowsdesktop-runtime-8.0.6-win-x64.exe", 2);
+	download(L"https://download.visualstudio.microsoft.com/download/pr/bb581716-4cca-466e-9857-512e2371734b/5fe261422a7305171866fd7812d0976f/windowsdesktop-runtime-8.0.7-win-x64.exe", 2);
 	download(L"https://nightly.link/SourMesen/Mesen2/workflows/build/master/Mesen%20%28Windows%20-%20net8.0%20-%20AoT%29.zip", 1);
 	local_download(L"7z.exe", 0);
 
@@ -619,19 +657,6 @@ void mesen()
 	std::filesystem::remove_all(b[0]);
 	std::filesystem::remove_all(b[1]);
 	std::filesystem::remove_all(b[2]);
-
-	AppendPath(3, L"Mesen.exe");
-	sei = {};
-	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
-	sei.fMask = 64;
-	sei.nShow = 5;
-	sei.lpFile = b[3];
-	ShellExecuteEx(&sei);
-	if (sei.hProcess != nullptr)
-	{
-		WaitForSingleObject(sei.hProcess, INFINITE);
-	}
-
 
 	exit(0);
 }
@@ -688,35 +713,6 @@ void xenia()
 		WaitForSingleObject(sei.hProcess, INFINITE);
 	}
 
-	exit(0);
-}
-
-void hbmame()
-{
-	if (x64())
-	{
-		*b[0] = '\0';
-		*b[1] = '\0';
-		AppendPath(0, std::filesystem::current_path());
-		AppendPath(0, L"7z.exe");
-		local_download(L"7z.exe", 0);
-		AppendPath(1, std::filesystem::current_path());
-		AppendPath(1, L"HBMAME.7z");
-		download(L"https://hbmame.1emulation.com/hbmameui20.7z", 1);
-		sei = {};
-		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
-		sei.fMask = 64;
-		sei.nShow = 5;
-		sei.lpFile = b[0];
-		sei.lpParameters = L"x HBMAME.7z -y";
-		ShellExecuteEx(&sei);
-		if (sei.hProcess != nullptr)
-		{
-			WaitForSingleObject(sei.hProcess, INFINITE);
-		}
-		std::filesystem::remove_all(b[1]);
-		std::filesystem::remove_all(b[0]);
-	}
 	exit(0);
 }
 
@@ -777,7 +773,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 	HWND hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME, CW_USEDEFAULT, CW_USEDEFAULT, 390, 130, nullptr, nullptr, hInstance, nullptr);
 
-	CreateWindow(L"BUTTON", L"Patch", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, 10, 10, 75, 75, hWnd, reinterpret_cast<HMENU>(1), hInstance, nullptr);
+	CreateWindow(L"BUTTON", L"Patch", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 10, 10, 75, 75, hWnd, reinterpret_cast<HMENU>(1), hInstance, nullptr);
 
 	CreateWindow(L"BUTTON", L"Restore", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, 290, 10, 75, 75, hWnd, reinterpret_cast<HMENU>(2), hInstance, nullptr);
 
@@ -824,28 +820,29 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				DirectX9();
 				break;
 			case 2:
-				mc_java();
+				diabloiv(false);
+				DirectX9();
 				break;
 			case 3:
-				mesen();
+				mc_java();
 				break;
 			case 4:
-				xenia();
+				mesen2();
 				break;
 			case 5:
-				fbneo();
+				xenia();
 				break;
 			case 6:
-				hbmame();
+				fbneo();
 				break;
 			case 7:
-				mame();
+				hbmame();
 				break;
 			case 8:
-				winaio();
+				mame();
 				break;
 			case 9:
-				zip();
+				redistaio();
 				break;
 			case 10:
 				activate();
@@ -863,6 +860,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				break;
 			case 1:
 				dota2(true);
+				DirectX9();
+				break;
+			case 2:
+				diabloiv(true);
 				DirectX9();
 				break;
 			default:;
