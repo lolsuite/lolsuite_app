@@ -320,7 +320,6 @@ void dota2(bool restore)
 {
 	TerminateProcess(L"dota2.exe");
 	*b[1] = '\0';
-	*b[2] = '\0';
 	*b[0] = '\0';
 	*b[82] = '\0';
 
@@ -341,18 +340,15 @@ void dota2(bool restore)
 		WritePrivateProfileString(L"Path", L"DOTA 2", b[0], b[82]);
 	}
 	AppendPath(0, L"game\\bin\\win64");
-	CombinePath(1, 0, L"D3DCompiler_47.dll");
-	CombinePath(2, 0, L"embree3.dll");
+	CombinePath(1, 0, L"embree3.dll");
 	Unblock(JoinPath(0, L"dota2.exe"));
 	if (restore)
 	{
-		local_download(L"r/dota2/d3dcompiler_47.dlll", 1);
-		local_download(L"r/dota2/embree3.dll", 2);
+		local_download(L"r/dota2/embree3.dll", 1);
 	}
 	else
 	{
-		local_download(L"6/D3DCompiler_47.dll", 1);
-		local_download(L"6/embree4.dll", 2);
+		local_download(L"6/embree4.dll", 1);
 
 	}
 	sei = {};
