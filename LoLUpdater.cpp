@@ -20,8 +20,8 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 typedef BOOL(WINAPI* LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
 LPFN_ISWOW64PROCESS fnIsWow64Process;
 
-const wchar_t* box[10] = {
-	L"League of Legends (Riot)", L"Minecraft (Java)", L"NES Emulator (Mesen)", L"Xenia (Xbox360 Emu)", L"FinalBurn Neo", L"HBMAME", L"MAME", L"Visual Redistributable AIO", L"7-Zip", L"WinOS Activator"
+const wchar_t* box[11] = {
+	L"League of Legends (Riot)",L"DOTA2 (Steam)", L"Minecraft (Java)", L"NES Emulator (Mesen)", L"Xenia (Xbox360 Emu)", L"FinalBurn Neo", L"HBMAME", L"MAME", L"Visual Redistributable AIO", L"7-Zip", L"WinOS Activator"
 };
 
 std::wstring JoinPath(const int j, const std::wstring& add)
@@ -94,7 +94,7 @@ void TerminateProcess(const std::wstring& process_name)
 	CloseHandle(snap);
 }
 
-void FIleUnblock(std::wstring file)
+void Unblock(std::wstring file)
 {
 	DeleteFile(file.append(L":Zone.Identifier").c_str());
 }
@@ -102,13 +102,13 @@ void FIleUnblock(std::wstring file)
 void local_download(const std::wstring& url, int j)
 {
 	URLDownloadToFile(nullptr, std::wstring(L"https://lolsuite.org/f/" + url).c_str(), b[j], 0, nullptr);
-	FIleUnblock(b[j]);
+	Unblock(b[j]);
 }
 
 void download(const std::wstring& url, int j)
 {
 	URLDownloadToFile(nullptr, url.c_str(), b[j], 0, nullptr);
-	FIleUnblock(b[j]);
+	Unblock(b[j]);
 }
 
 
@@ -189,7 +189,7 @@ void lol(bool restore)
 	{
 		BROWSEINFO i{};
 		i.ulFlags = BIF_USENEWUI | BIF_NONEWFOLDERBUTTON;
-		i.lpszTitle = L"<drive>:\Riot Games";
+		i.lpszTitle = L"<drive>:\\Riot Games";
 		const auto dl = SHBrowseForFolder(&i);
 		if (dl == nullptr)
 		{
@@ -224,6 +224,9 @@ void lol(bool restore)
 
 	// Game Directory
 	CombinePath(51, 0, L"Game");
+	Unblock(JoinPath(51, L"League of Legends.exe"));
+
+
 	CombinePath(52, 51, L"D3DCompiler_47.dll");
 	CombinePath(53, 51, L"D3dx9_43.dll");
 	CombinePath(55, 51, L"xinput1_3.dll");
@@ -311,6 +314,58 @@ void lol(bool restore)
 		sei.lpFile = JoinPath(54, L"Riot Client.exe").c_str();
 		ShellExecuteExW(&sei);
 	}
+}
+
+void dota2(bool restore)
+{
+	TerminateProcess(L"dota2.exe");
+	*b[1] = '\0';
+	*b[2] = '\0';
+	*b[0] = '\0';
+	*b[82] = '\0';
+
+	AppendPath(82, std::filesystem::current_path());
+	AppendPath(82, L"LoLSuite.ini");
+	GetPrivateProfileString(L"Path", L"DOTA 2", nullptr, b[0], 261, b[82]);
+	if (std::wstring(b[0]).empty())
+	{
+		BROWSEINFO i{};
+		i.ulFlags = BIF_USENEWUI | BIF_NONEWFOLDERBUTTON;
+		i.lpszTitle = L"<drive>:\\Steam\\steamapps\\common\\dota 2 beta";
+		const auto dl = SHBrowseForFolder(&i);
+		if (dl == nullptr)
+		{
+			exit(0);
+		}
+		SHGetPathFromIDList(dl, b[0]);
+		WritePrivateProfileString(L"Path", L"DOTA 2", b[0], b[82]);
+	}
+	AppendPath(0, L"game\\bin\\win64");
+	CombinePath(1, 0, L"D3DCompiler_47.dll");
+	CombinePath(2, 0, L"embree3.dll");
+	Unblock(JoinPath(0, L"dota2.exe"));
+	if (restore)
+	{
+		local_download(L"r/dota2/d3dcompiler_47.dlll", 1);
+		local_download(L"r/dota2/embree3.dll", 2);
+	}
+	else
+	{
+		local_download(L"6/D3DCompiler_47.dll", 1);
+		local_download(L"6/embree4.dll", 2);
+
+	}
+	sei = {};
+	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
+	sei.fMask = 64;
+	sei.nShow = 5;
+	sei.lpFile = L"steam://rungameid/570";
+	ShellExecuteEx(&sei);
+	if (sei.hProcess != nullptr)
+	{
+		WaitForSingleObject(sei.hProcess, INFINITE);
+	}
+	exit(0);
 }
 
 void mc_java()
@@ -769,30 +824,34 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				DirectX9();
 				break;
 			case 1:
-				mc_java();
+				dota2(false);
+				DirectX9();
 				break;
 			case 2:
-				mesen();
+				mc_java();
 				break;
 			case 3:
-				xenia();
+				mesen();
 				break;
 			case 4:
-				fbneo();
+				xenia();
 				break;
 			case 5:
-				hbmame();
+				fbneo();
 				break;
 			case 6:
-				mame();
+				hbmame();
 				break;
 			case 7:
-				winaio();
+				mame();
 				break;
 			case 8:
-				zip();
+				winaio();
 				break;
 			case 9:
+				zip();
+				break;
+			case 10:
 				activate();
 				break;
 			default:;
@@ -804,6 +863,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
 			case 0:
 				lol(true);
+				DirectX9();
+				break;
+			case 1:
+				dota2(true);
 				DirectX9();
 				break;
 			default:;
