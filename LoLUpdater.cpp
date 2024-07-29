@@ -555,7 +555,7 @@ void mame()
 		*b[0] = '\0';
 		AppendPath(0, std::filesystem::current_path());
 		AppendPath(0, L"MAME.exe");
-		download(L"https://github.com/mamedev/mame/releases/download/mame0267/mame0267b_64bit.exe", 82);
+		download(L"https://github.com/mamedev/mame/releases/download/mame0267/mame0267b_64bit.exe", 0);
 		*b[1] = '\0';
 		AppendPath(1, std::filesystem::current_path());
 		AppendPath(1, L"7z.exe");
