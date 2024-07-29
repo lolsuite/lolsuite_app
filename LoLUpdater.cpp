@@ -21,8 +21,8 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 typedef BOOL(WINAPI* LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
 LPFN_ISWOW64PROCESS fnIsWow64Process;
 
-const wchar_t* box[11] = {
-	L"League of Legends",L"DOTA2", L"Diablo IV", L"Minecraft Java Edition", L"Mesen2", L"Xenia (Unlocked)", L"FBNeo", L"HBMAME", L"MAME", L"Visual Redistributables", L"WinOS Activator"
+const wchar_t* box[8] = {
+	L"League of Legends", L"DOTA2", L"Diablo IV", L"Minecraft Java Edition", L"Mesen2", L"Xenia (Unlocked)", L"Arcade Pack", L"WinOS Activator"
 };
 
 std::wstring JoinPath(const int j, const std::wstring& add)
@@ -530,13 +530,17 @@ void fbneo()
 	{
 		download(L"https://github.com/finalburnneo/FBNeo/releases/download/latest/Windows.x32.zip", 1);
 	}
+	*b[2] = '\0';
+	AppendPath(2, std::filesystem::current_path());
+	AppendPath(2, L"FBNeo");
 
+	CreateDirectoryW(b[2], NULL);
 	sei = {};
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 	sei.fMask = 64;
 	sei.nShow = 5;
 	sei.lpFile = b[0];
-	sei.lpParameters = L"x FBNeo.zip -y";
+	sei.lpParameters = L"x FBNeo.zip -oFBNeo -y";
 	ShellExecuteEx(&sei);
 	if (sei.hProcess != nullptr)
 	{
@@ -545,7 +549,6 @@ void fbneo()
 
 	std::filesystem::remove_all(b[0]);
 	std::filesystem::remove_all(b[1]);
-	exit(0);
 }
 
 void mame()
@@ -561,12 +564,17 @@ void mame()
 		AppendPath(1, L"7z.exe");
 		local_download(L"7z.exe", 1);
 
+		*b[2] = '\0';
+		AppendPath(2, std::filesystem::current_path());
+		AppendPath(2, L"MAME");
+
+		CreateDirectoryW(b[2], NULL);
 		sei = {};
 		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 		sei.fMask = 64;
 		sei.nShow = 5;
 		sei.lpFile = b[1];
-		sei.lpParameters = L"x MAME.exe -y";
+		sei.lpParameters = L"x MAME.exe -oMAME -y";
 		ShellExecuteEx(&sei);
 		if (sei.hProcess != nullptr)
 		{
@@ -576,8 +584,6 @@ void mame()
 	}
 	std::filesystem::remove_all(b[0]);
 	std::filesystem::remove_all(b[1]);
-
-	exit(0);
 }
 
 void hbmame()
@@ -592,12 +598,20 @@ void hbmame()
 		AppendPath(1, std::filesystem::current_path());
 		AppendPath(1, L"HBMAME.7z");
 		download(L"https://hbmame.1emulation.com/hbmameui20.7z", 1);
+
+		*b[2] = '\0';
+		AppendPath(2, std::filesystem::current_path());
+		AppendPath(2, L"HBMAME");
+
+		CreateDirectoryW(b[2], NULL);
+
+
 		sei = {};
 		sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 		sei.fMask = 64;
 		sei.nShow = 5;
 		sei.lpFile = b[0];
-		sei.lpParameters = L"x HBMAME.7z -y";
+		sei.lpParameters = L"x HBMAME.7z -oHBMAME -y";
 		ShellExecuteEx(&sei);
 		if (sei.hProcess != nullptr)
 		{
@@ -608,7 +622,6 @@ void hbmame()
 		std::filesystem::remove_all(b[1]);
 
 	}
-	exit(0);
 }
 
 void mesen2()
@@ -833,18 +846,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				xenia();
 				break;
 			case 6:
+				redistaio();
 				fbneo();
+				hbmame();
+				mame();
+				exit(0);
 				break;
 			case 7:
-				hbmame();
-				break;
-			case 8:
-				mame();
-				break;
-			case 9:
-				redistaio();
-				break;
-			case 10:
 				activate();
 				break;
 			default:;
