@@ -840,7 +840,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				xenia();
 				break;
 			case 6:
-				redistaio();
 				DirectX9();
 				fbneo();
 				hbmame();
