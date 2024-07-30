@@ -21,8 +21,8 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 typedef BOOL(WINAPI* LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
 LPFN_ISWOW64PROCESS fnIsWow64Process;
 
-const wchar_t* box[8] = {
-	L"League of Legends", L"DOTA2", L"Diablo IV", L"Minecraft Java Edition", L"Mesen2", L"Xenia (Unlocked)", L"Arcade Pack", L"WinOS Activator"
+const wchar_t* box[7] = {
+	L"League of Legends", L"DOTA2", L"Diablo IV", L"Minecraft Java Edition", L"Mesen2", L"Xenia (Unlocked)", L"Arcade Pack"
 };
 
 std::wstring JoinPath(const int j, const std::wstring& add)
@@ -475,12 +475,6 @@ void DirectX9()
 	std::filesystem::remove_all(b[82]);
 }
 
-void activate()
-{
-	system("start powershell.exe -command \"irm https://get.activated.win | iex\"");
-	exit(0);
-}
-
 void redistaio()
 {
 	*b[0] = '\0';
@@ -847,13 +841,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				break;
 			case 6:
 				redistaio();
+				DirectX9();
 				fbneo();
 				hbmame();
 				mame();
 				exit(0);
-				break;
-			case 7:
-				activate();
 				break;
 			default:;
 			}
