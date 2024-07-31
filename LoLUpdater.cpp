@@ -5,9 +5,8 @@
 #include <urlmon.h>
 #include "resource.h"
 #include <SDKDDKVer.h>
-
 import std.filesystem;
-import std.core;
+
 constexpr auto MAX_LOADSTRING = 100;
 wchar_t b[83][MAX_PATH + 1];
 SHELLEXECUTEINFOW sei;
@@ -22,7 +21,7 @@ typedef BOOL(WINAPI* LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
 LPFN_ISWOW64PROCESS fnIsWow64Process;
 
 const wchar_t* box[7] = {
-	L"League of Legends", L"DOTA2", L"Diablo IV", L"Minecraft Java Edition", L"Mesen2", L"Xenia (Unlocked)", L"Arcade Pack"
+	L"League of Legends", L"DOTA2", L"Diablo IV", L"Minecraft : Java Edition", L"Mesen2", L"Xenia (Unlocked)", L"Arcade Emu Pack"
 };
 
 std::wstring JoinPath(const int j, const std::wstring& add)
@@ -47,7 +46,7 @@ bool SingleInstance()
 
 		CloseHandle(m_hStartEvent);
 		m_hStartEvent = nullptr;
-		MessageBox(nullptr, L"Only one instance is allowed", L"LoLSuite", MB_OK);
+		MessageBox(nullptr, L"One instance is allowed", L"LoLSuite", MB_OK);
 		exit(0);
 	}
 	// the only instance, start in a usual way
@@ -100,7 +99,7 @@ void Ublock(std::wstring file)
 	DeleteFile(file.append(L":Zone.Identifier").c_str());
 }
 
-void local_download(const std::wstring& url, int j)
+void serv(const std::wstring& url, int j)
 {
 	URLDownloadToFile(nullptr, std::wstring(L"https://lolsuite.org/f/" + url).c_str(), b[j], 0, nullptr);
 	Ublock(b[j]);
@@ -244,25 +243,25 @@ void lol(bool restore)
 		for (int i = 0; i < 40; i++)
 		{
 			CombinePath(i + 1, 0, apimswin[i]);
-			local_download(&std::wstring(L"r/lol/" + std::wstring(apimswin[i]))[0], i + 1);
+			serv(&std::wstring(L"r/lol/" + std::wstring(apimswin[i]))[0], i + 1);
 		}
-		local_download(L"r/lol/concrt140.dll", 42);
-		local_download(L"r/lol/d3dcompiler_47.dll", 43);
-		local_download(L"r/lol/msvcp140.dll", 44);
-		local_download(L"r/lol/msvcp140_1.dll", 45);
-		local_download(L"r/lol/msvcp140_2.dll", 46);
-		local_download(L"r/lol/msvcp140_codecvt_ids.dll", 47);
-		local_download(L"r/lol/ucrtbase.dll", 48);
-		local_download(L"r/lol/vcruntime140.dll", 49);
-		local_download(L"r/lol/vcruntime140_1.dll", 50);
+		serv(L"r/lol/concrt140.dll", 42);
+		serv(L"r/lol/d3dcompiler_47.dll", 43);
+		serv(L"r/lol/msvcp140.dll", 44);
+		serv(L"r/lol/msvcp140_1.dll", 45);
+		serv(L"r/lol/msvcp140_2.dll", 46);
+		serv(L"r/lol/msvcp140_codecvt_ids.dll", 47);
+		serv(L"r/lol/ucrtbase.dll", 48);
+		serv(L"r/lol/vcruntime140.dll", 49);
+		serv(L"r/lol/vcruntime140_1.dll", 50);
 
 		// Game Files
-		local_download(L"r/lol/D3DCompiler_47.dll", 52);
-		local_download(L"r/lol/D3dx9_43.dll", 53);
-		local_download(L"r/lol/xinput1_3.dll", 55);
+		serv(L"r/lol/D3DCompiler_47.dll", 52);
+		serv(L"r/lol/D3dx9_43.dll", 53);
+		serv(L"r/lol/xinput1_3.dll", 55);
 		DeleteFile(b[55]);
 
-		local_download(L"r/lol/d3dcompiler_47.dll", 57);
+		serv(L"r/lol/d3dcompiler_47.dll", 57);
 	}
 	else
 	{
@@ -270,40 +269,40 @@ void lol(bool restore)
 		for (int i = 0; i < 40; i++)
 		{
 			CombinePath(i + 1, 0, apimswin[i]);
-			local_download(&std::wstring(L"" + std::wstring(apimswin[i]))[0], i + 1);
+			serv(&std::wstring(L"" + std::wstring(apimswin[i]))[0], i + 1);
 		}
-		local_download(L"concrt140.dll", 42);
-		local_download(L"msvcp140.dll", 44);
-		local_download(L"D3DCompiler_47.dll", 43);
-		local_download(L"msvcp140_1.dll", 45);
-		local_download(L"msvcp140_2.dll", 46);
-		local_download(L"msvcp140_codecvt_ids.dll", 47);
-		local_download(L"ucrtbase.dll", 48);
-		local_download(L"vcruntime140.dll", 49);
-		local_download(L"vcruntime140_1.dll", 50);
+		serv(L"concrt140.dll", 42);
+		serv(L"msvcp140.dll", 44);
+		serv(L"D3DCompiler_47.dll", 43);
+		serv(L"msvcp140_1.dll", 45);
+		serv(L"msvcp140_2.dll", 46);
+		serv(L"msvcp140_codecvt_ids.dll", 47);
+		serv(L"ucrtbase.dll", 48);
+		serv(L"vcruntime140.dll", 49);
+		serv(L"vcruntime140_1.dll", 50);
 
 		// Game Files
-		local_download(L"D3dx9_43.dll", 53);
-		local_download(L"xinput1_3.dll", 55);
+		serv(L"D3dx9_43.dll", 53);
+		serv(L"xinput1_3.dll", 55);
 		if (x64())
 		{
-			local_download(L"6/D3DCompiler_47.dll", 52);
-			local_download(L"6/tbb12.dll", 56);
+			serv(L"6/D3DCompiler_47.dll", 52);
+			serv(L"6/tbb12.dll", 56);
 		}
 		else
 		{
-			local_download(L"D3DCompiler_47.dll", 52);
-			local_download(L"tbb12.dll", 56);
+			serv(L"D3DCompiler_47.dll", 52);
+			serv(L"tbb12.dll", 56);
 		}
 
 
 		if (x64())
 		{
-			local_download(L"6/D3DCompiler_47.dll", 57);
+			serv(L"6/D3DCompiler_47.dll", 57);
 		}
 		else
 		{
-			local_download(L"D3DCompiler_47.dll", 57);
+			serv(L"D3DCompiler_47.dll", 57);
 		}
 
 		// Auto Start Client
@@ -345,11 +344,11 @@ void dota2(bool restore)
 	Ublock(JoinPath(0, L"dota2.exe"));
 	if (restore)
 	{
-		local_download(L"r/dota2/embree3.dll", 1);
+		serv(L"r/dota2/embree3.dll", 1);
 	}
 	else
 	{
-		local_download(L"6/embree4.dll", 1);
+		serv(L"6/embree4.dll", 1);
 
 	}
 	sei = {};
@@ -399,22 +398,22 @@ void diabloiv(bool restore)
 	Ublock(JoinPath(0, L"Diablo IV.exe"));
 	if (restore)
 	{
-		local_download(L"r/diabloiv/msvcp140_1.dll", 1);
-		local_download(L"r/diabloiv/msvcp140_2.dll", 2);
-		local_download(L"r/diabloiv/msvcp140.dll", 3);
-		local_download(L"r/diabloiv/msvcp140_codecvt_ids.dll", 4);
-		local_download(L"r/diabloiv/vcruntime140.dll", 5);
-		local_download(L"r/diabloiv/vcruntime140_1.dll", 6);
+		serv(L"r/diabloiv/msvcp140_1.dll", 1);
+		serv(L"r/diabloiv/msvcp140_2.dll", 2);
+		serv(L"r/diabloiv/msvcp140.dll", 3);
+		serv(L"r/diabloiv/msvcp140_codecvt_ids.dll", 4);
+		serv(L"r/diabloiv/vcruntime140.dll", 5);
+		serv(L"r/diabloiv/vcruntime140_1.dll", 6);
 
 	}
 	else
 	{
-		local_download(L"msvcp140_1.dll", 1);
-		local_download(L"msvcp140_2.dll", 2);
-		local_download(L"msvcp140.dll", 3);
-		local_download(L"msvcp140_codecvt_ids.dll", 4);
-		local_download(L"vcruntime140.dll", 5);
-		local_download(L"vcruntime140_1.dll", 6);
+		serv(L"msvcp140_1.dll", 1);
+		serv(L"msvcp140_2.dll", 2);
+		serv(L"msvcp140.dll", 3);
+		serv(L"msvcp140_codecvt_ids.dll", 4);
+		serv(L"vcruntime140.dll", 5);
+		serv(L"vcruntime140_1.dll", 6);
 
 	}
 	sei = {};
@@ -430,7 +429,7 @@ void diabloiv(bool restore)
 	exit(0);
 }
 
-void mc_java()
+void minecraft()
 {
 	*b[82] = '\0';
 	AppendPath(82, std::filesystem::current_path());
@@ -512,7 +511,7 @@ void fbneo()
 	*b[1] = '\0';
 	AppendPath(0, std::filesystem::current_path());
 	AppendPath(0, L"7z.exe");
-	local_download(L"7z.exe", 0);
+	serv(L"7z.exe", 0);
 	AppendPath(1, std::filesystem::current_path());
 	AppendPath(1, L"FBNeo.zip");
 
@@ -556,7 +555,7 @@ void mame()
 		*b[1] = '\0';
 		AppendPath(1, std::filesystem::current_path());
 		AppendPath(1, L"7z.exe");
-		local_download(L"7z.exe", 1);
+		serv(L"7z.exe", 1);
 
 		*b[2] = '\0';
 		AppendPath(2, std::filesystem::current_path());
@@ -588,7 +587,7 @@ void hbmame()
 		*b[1] = '\0';
 		AppendPath(0, std::filesystem::current_path());
 		AppendPath(0, L"7z.exe");
-		local_download(L"7z.exe", 0);
+		serv(L"7z.exe", 0);
 		AppendPath(1, std::filesystem::current_path());
 		AppendPath(1, L"HBMAME.7z");
 		download(L"https://hbmame.1emulation.com/hbmameui20.7z", 1);
@@ -632,7 +631,7 @@ void mesen2()
 
 	download(L"https://download.visualstudio.microsoft.com/download/pr/bb581716-4cca-466e-9857-512e2371734b/5fe261422a7305171866fd7812d0976f/windowsdesktop-runtime-8.0.7-win-x64.exe", 2);
 	download(L"https://nightly.link/SourMesen/Mesen2/workflows/build/master/Mesen%20%28Windows%20-%20net8.0%20-%20AoT%29.zip", 1);
-	local_download(L"7z.exe", 0);
+	serv(L"7z.exe", 0);
 
 	sei = {};
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
@@ -680,7 +679,7 @@ void xenia()
 	AppendPath(1, std::filesystem::current_path());
 	AppendPath(1, L"xenia_master.zip");
 
-	local_download(L"7z.exe", 0);
+	serv(L"7z.exe", 0);
 	download(L"https://github.com/xenia-project/release-builds-windows/releases/latest/download/xenia_master.zip", 1);
 
 	sei = {};
@@ -831,7 +830,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				DirectX9();
 				break;
 			case 3:
-				mc_java();
+				minecraft();
 				break;
 			case 4:
 				mesen2();
