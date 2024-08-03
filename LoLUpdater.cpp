@@ -21,7 +21,7 @@ typedef BOOL(WINAPI* LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
 LPFN_ISWOW64PROCESS fnIsWow64Process;
 
 const wchar_t* box[7] = {
-	L"League of Legends", L"DOTA2", L"Diablo IV", L"Minecraft : Java Edition", L"Mesen2", L"Xenia (Unlocked)", L"Arcade Emu Pack"
+	L"League of Legends", L"DOTA2", L"Diablo IV", L"Minecraft: Java Edition", L"Mesen2", L"Xenia (Unlocked)", L"Arcade Emu Pack"
 };
 
 std::wstring JoinPath(const int j, const std::wstring& add)
