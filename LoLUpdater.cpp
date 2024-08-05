@@ -522,6 +522,9 @@ void EAX()
 	std::filesystem::remove_all(b[0]);
 	std::filesystem::remove_all(b[1]);
 	std::filesystem::remove_all(b[82]);
+	*b[2] = '\0';
+	AppendPath(2, std::filesystem::current_path());
+	AppendPath(2, L"Alchemy.zip");
 	std::filesystem::remove_all(b[2]);
 	*b[2] = '\0';
 	AppendPath(2, std::filesystem::current_path());
