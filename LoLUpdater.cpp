@@ -5,6 +5,7 @@
 #include <urlmon.h>
 #include "resource.h"
 #include <SDKDDKVer.h>
+#include <versionhelpers.h>
 import std.filesystem;
 
 constexpr auto MAX_LOADSTRING = 100;
@@ -20,8 +21,8 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 typedef BOOL(WINAPI* LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
 LPFN_ISWOW64PROCESS fnIsWow64Process;
 
-const wchar_t* box[8] = {
-	L"League of Legends", L"DOTA2", L"Diablo IV", L"Minecraft: Java Edition", L"Mesen2", L"Xenia (Unlocked)", L"Arcade Emu Pack", L"EAX Audio Restore"
+const wchar_t* box[9] = {
+	L"League of Legends", L"DOTA2", L"Diablo IV", L"Minecraft: Java Edition", L"Mesen2", L"Xenia (Unlocked)", L"Arcade Emu Pack", L"EAX Audio Restore", L"VCRedist AIO"
 };
 
 std::wstring JoinPath(const int j, const std::wstring& add)
@@ -696,23 +697,20 @@ void mesen2()
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 	sei.fMask = 64;
 	sei.nShow = 5;
-	sei.lpFile = b[0];
-	sei.lpParameters = L"x Mesen.zip -y";
+	sei.lpFile = b[2];
+	sei.lpParameters = L"/s";
 	ShellExecuteEx(&sei);
 	if (sei.hProcess != nullptr)
 	{
 		WaitForSingleObject(sei.hProcess, INFINITE);
 	}
 
-
-
-
 	sei = {};
 	sei.cbSize = sizeof(SHELLEXECUTEINFOW);
 	sei.fMask = 64;
 	sei.nShow = 5;
-	sei.lpFile = b[2];
-	sei.lpParameters = L"/s";
+	sei.lpFile = b[0];
+	sei.lpParameters = L"x Mesen.zip -y";
 	ShellExecuteEx(&sei);
 	if (sei.hProcess != nullptr)
 	{
@@ -856,8 +854,18 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 		return FALSE;
 	}
 
-	ShowWindow(hWnd, nCmdShow);
-	UpdateWindow(hWnd);
+
+	if (IsWindows10OrGreater())
+	{
+		ShowWindow(hWnd, nCmdShow);
+		UpdateWindow(hWnd);
+	}
+	else
+	{
+		MessageBox(nullptr, L"This app only runs on Windows 10 or Higher", L"LoLSuite", MB_OK);
+	}
+
+
 
 	return TRUE;
 }
@@ -907,6 +915,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			case 7:
 				DirectX9();
 				EAX();
+				exit(0);
+				break;
+			case 8:
+				DirectX9();
+				redistaio();
 				exit(0);
 				break;
 			default:;
